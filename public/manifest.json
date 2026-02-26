@@ -1,0 +1,27 @@
+{
+  "name": "MILY'S Gourmet",
+  "short_name": "MILY'S",
+  "description": "Application de restauration d'entreprise",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#F97316",
+  "background_color": "#FFFFFF",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["food", "business", "productivity"]
+}
