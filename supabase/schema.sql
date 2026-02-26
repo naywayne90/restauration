@@ -1975,138 +1975,149 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- --------------------------------------------------------------------------
--- 7.4h Photos des plats — URLs Unsplash
+-- 7.4h Photos des plats — URLs Wikimedia Commons, Unsplash & Pexels
 -- --------------------------------------------------------------------------
--- Original dishes (7.4)
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000001'; -- Attiéké Poulet Grillé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000002'; -- Poulet DG
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000003'; -- Kedjenou de Poulet
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000004'; -- Foutou Sauce Graine
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000005'; -- Riz Sauce Tomate Poisson
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000006'; -- Garba
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000007'; -- Alloco Omelette
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000008'; -- Sauce Gombo + Riz
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000009'; -- Placali Sauce Arachide
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000010'; -- Riz Djoumblé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000011'; -- Tilapia Braisé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000012'; -- Salade Composée
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000013'; -- Beignets Haricots
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000014'; -- Gâteau Ananas
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000015'; -- Bissap Maison
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Plats ivoiriens originaux (7.4)
+-- ═══════════════════════════════════════════════════════════════════════════
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Poulet_brais%C3%A9_attiek%C3%A9.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000001'; -- Attiéké Poulet Grillé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Poulet_DG.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000002'; -- Poulet DG
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000003'; -- Kedjenou de Poulet
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000004'; -- Foutou Sauce Graine
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Senegalese_Thieboudienne.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000005'; -- Riz Sauce Tomate Poisson
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Garba_plat_ivoirien.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000006'; -- Garba
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Un_plat_d%27alloco_Fried_Plantains.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000007'; -- Alloco Omelette
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000008'; -- Sauce Gombo + Riz
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_igname_accompagn%C3%A9_de_sauce_arachide.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000009'; -- Placali Sauce Arachide
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Jollof_rice_with_vegetable.jpg?width=600' WHERE id = '33333333-0000-0000-0000-000000000010'; -- Riz Djoumblé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Attieke_poisson_in_Abidjan_C%C3%B4te_d%27Ivoire.JPG?width=600' WHERE id = '33333333-0000-0000-0000-000000000011'; -- Tilapia Braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000012'; -- Salade Composée
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kosai%28Akara%29.jpg?width=600' WHERE id = '33333333-0000-0000-0000-000000000013'; -- Beignets Haricots
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000014'; -- Gâteau Ananas
+UPDATE dishes SET photo_url = 'https://images.pexels.com/photos/8678927/pexels-photo-8678927.jpeg?auto=compress&cs=tinysrgb&w=600' WHERE id = '33333333-0000-0000-0000-000000000015'; -- Bissap Maison
+
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Entrées (7.4b)
+-- ═══════════════════════════════════════════════════════════════════════════
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000001'; -- Salade César
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000002'; -- Salade Niçoise
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000003'; -- Salade de gésiers confits
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000004'; -- Salade de foie de volaille
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000005'; -- Salade du Chef
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1551248429-40975aa4de74?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000006'; -- Salade Grecque
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Flickr_-_cyclonebill_-_Salade_ni%C3%A7oise.jpg/600px-Flickr_-_cyclonebill_-_Salade_ni%C3%A7oise.jpg' WHERE id = '33333333-1000-0000-0000-000000000002'; -- Salade Niçoise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000003'; -- Salade de gésiers confits
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000004'; -- Salade de foie de volaille
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000005'; -- Salade du Chef
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000006'; -- Salade Grecque
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000007'; -- Farandole de crudités
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000008'; -- Salade de carottes Thaï
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604497181015-76590d828b75?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000009'; -- Salade de poulet croustillant
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000010'; -- Œufs Mimosas
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604909052743-94e838986d24?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000009'; -- Salade de poulet croustillant
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1633436375153-d7045cb93e38?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000010'; -- Œufs Mimosas
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000011'; -- Œufs en cocotte
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000012'; -- Salade de lentilles
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000013'; -- Salade d'avocat villageoise
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000014'; -- Salade d'avocat crevettes mangues
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000015'; -- Salade de bœuf
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000016'; -- Salade Piémontaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000016'; -- Salade Piémontaise
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000017'; -- Salade de maïs
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000018'; -- Taboulé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000019'; -- Salade d'attiéké
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000020'; -- Beignets à la sardine
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1560717789-0ac7c58ac90a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000021'; -- Tomates farcies
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Traditional_Tabbouleh.JPG/600px-Traditional_Tabbouleh.JPG' WHERE id = '33333333-1000-0000-0000-000000000018'; -- Taboulé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Poulet_brais%C3%A9_attiek%C3%A9.JPG?width=600' WHERE id = '33333333-1000-0000-0000-000000000019'; -- Salade d'attiéké
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kosai%28Akara%29.jpg?width=600' WHERE id = '33333333-1000-0000-0000-000000000020'; -- Beignets à la sardine
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Filled_tomatoes.JPG/600px-Filled_tomatoes.JPG' WHERE id = '33333333-1000-0000-0000-000000000021'; -- Tomates farcies
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1559564484-e48b3e040ff4?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000022'; -- Tarte tomate thon
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000023'; -- Quiche au jambon
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000024'; -- Tarte aux champignons
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1608039829572-2b0f4a41af53?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000023'; -- Quiche au jambon
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Mushroom_and_leek_quiche.jpg/600px-Mushroom_and_leek_quiche.jpg' WHERE id = '33333333-1000-0000-0000-000000000024'; -- Tarte aux champignons
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1506280754576-f6fa8a873550?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000025'; -- Tarte à l'oignon
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000026'; -- Salade périgourdine
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000027'; -- Salade de tomates pesto
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000028'; -- Salade asiatique concombres
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000029'; -- Salade avocat poulet grillé
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000030'; -- Salade haricots verts thon
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000031'; -- Salade Lyonnaise
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000032'; -- Œufs de Moumar
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1560717789-0ac7c58ac90a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000033'; -- Courgettes farcies
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Salade_lyonnaise.JPG/600px-Salade_lyonnaise.JPG' WHERE id = '33333333-1000-0000-0000-000000000031'; -- Salade Lyonnaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1633436375153-d7045cb93e38?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000032'; -- Œufs de Moumar
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/%D0%9F%D0%BE%D0%BB%D0%BD%D0%B5%D1%82%D0%B8_%D1%82%D0%B8%D0%BA%D0%B2%D0%B8%D1%86%D0%B8.jpg/600px-%D0%9F%D0%BE%D0%BB%D0%BD%D0%B5%D1%82%D0%B8_%D1%82%D0%B8%D0%BA%D0%B2%D0%B8%D1%86%D0%B8.jpg' WHERE id = '33333333-1000-0000-0000-000000000033'; -- Courgettes farcies
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000034'; -- Salade de langue de bœuf
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000035'; -- Quiche aux crevettes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000036'; -- Quiche aux écrevisses
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000037'; -- Quiche lorraine
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Quiche_lorraine_02.JPG/600px-Quiche_lorraine_02.JPG' WHERE id = '33333333-1000-0000-0000-000000000035'; -- Quiche aux crevettes
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Quiche_lorraine_02.JPG/600px-Quiche_lorraine_02.JPG' WHERE id = '33333333-1000-0000-0000-000000000036'; -- Quiche aux écrevisses
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Quiche_lorraine_01.JPG/600px-Quiche_lorraine_01.JPG' WHERE id = '33333333-1000-0000-0000-000000000037'; -- Quiche lorraine
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000038'; -- Avocats pamplemousse crevettes
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000039'; -- Velouté de courges
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000040'; -- Salade concombres thaïlandaise
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000041'; -- Aumônière de crêpes
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000042'; -- Crêpes roulées
 
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Sauces traditionnelles (7.4c)
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000001'; -- Sauce djoumgblé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000002'; -- Sauce gouagouassou
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000003'; -- Sauce gombo
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000004'; -- Sauce Kopê
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000005'; -- Sauce kwala
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000006'; -- Sauce graine
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000007'; -- Sauce claire
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000008'; -- Soumara Lafri
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000009'; -- Soupe du pêcheur
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000010'; -- Sauce Arachide
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000011'; -- Sauce Arachide-Dah
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000012'; -- Sauce pistache
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000013'; -- Biokesseu
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000014'; -- Sauce N'tro
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000015'; -- Sauce Akpi
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000016'; -- Akpessi
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000017'; -- Citrouille de crabes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000018'; -- Sauce feuille
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000019'; -- Kédjénou
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000020'; -- Pépésoupe de carpes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000021'; -- Pépésoupe de tripes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000022'; -- Kédjénou de pintade
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000023'; -- Pépésoupe de pâtes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000024'; -- Sauce Mafé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000025'; -- Soupou Kandia
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000026'; -- Yassa de poulet
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000027'; -- Yassa de poisson
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000028'; -- Tchiou boulettes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000029'; -- Sauce moyo
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000030'; -- Sauce tomate gingembre gombo
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000031'; -- Sauce dja
+-- ═══════════════════════════════════════════════════════════════════════════
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000001'; -- Sauce djoumgblé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000002'; -- Sauce gouagouassou
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000003'; -- Sauce gombo
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000004'; -- Sauce Kopê
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000005'; -- Sauce kwala
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000006'; -- Sauce graine
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000007'; -- Sauce claire
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000008'; -- Soumara Lafri
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou_de_Poisson.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000009'; -- Soupe du pêcheur
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Fufu_accompagn%C3%A9_d%27une_sauce_arachide_au_poulet.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000010'; -- Sauce Arachide
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Fufu_accompagn%C3%A9_d%27une_sauce_arachide_au_poulet.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000011'; -- Sauce Arachide-Dah
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000012'; -- Sauce pistache
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000013'; -- Biokesseu
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000014'; -- Sauce N'tro
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000015'; -- Sauce Akpi
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000016'; -- Akpessi
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou_de_Poisson.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000017'; -- Citrouille de crabes
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000018'; -- Sauce feuille
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000019'; -- Kédjénou
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou_de_Poisson.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000020'; -- Pépésoupe de carpes
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000021'; -- Pépésoupe de tripes
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000022'; -- Kédjénou de pintade
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000023'; -- Pépésoupe de pâtes
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_igname_accompagn%C3%A9_de_sauce_arachide.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000024'; -- Sauce Mafé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000025'; -- Soupou Kandia
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Poulet_Yassa.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000026'; -- Yassa de poulet
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Attieke_poisson_in_Abidjan_C%C3%B4te_d%27Ivoire.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000027'; -- Yassa de poisson
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000028'; -- Tchiou boulettes
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Attieke_poisson_in_Abidjan_C%C3%B4te_d%27Ivoire.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000029'; -- Sauce moyo
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauce_graine_de_palme.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000030'; -- Sauce tomate gingembre gombo
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Kedjenou_de_Poisson.JPG?width=600' WHERE id = '33333333-2000-0000-0000-000000000031'; -- Sauce dja
 
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Plats africains (7.4d)
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000001'; -- Choukouya de poulet
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000002'; -- Poulet braisé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000003'; -- Poulet sauté
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000004'; -- Brochettes de poulet
+-- ═══════════════════════════════════════════════════════════════════════════
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Choukouya_de_poulet.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000001'; -- Choukouya de poulet
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Du_poulet_braiser_ivoirien.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000002'; -- Poulet braisé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Du_poulet_braiser_ivoirien.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000003'; -- Poulet sauté
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Choukouya_de_poulet.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000004'; -- Brochettes de poulet
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000005'; -- Choukouya de porc
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000006'; -- Porc braisé
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000007'; -- Porc au four
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000008'; -- Poisson fumé braisé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000009'; -- Djenkoumé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000010'; -- Feijoada togolaise
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000011'; -- Choukouya de bœuf
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000012'; -- Jarret de bœuf braisé
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000013'; -- Brochettes de Kefta
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000014'; -- APF
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000015'; -- Tchep au poulet
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000016'; -- Tchep viande olives
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000017'; -- Tchep blanc poisson
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000018'; -- Tchep rouge poisson
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Attieke_poisson_in_Abidjan_C%C3%B4te_d%27Ivoire.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000008'; -- Poisson fumé braisé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Jollof_rice_with_vegetable.jpg?width=600' WHERE id = '33333333-3000-0000-0000-000000000009'; -- Djenkoumé
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz-Sauce_Graine.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000010'; -- Feijoada togolaise
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Choukouya_de_poulet.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000011'; -- Choukouya de bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000012'; -- Jarret de bœuf braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000013'; -- Brochettes de Kefta
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Poulet_brais%C3%A9_attiek%C3%A9.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000014'; -- APF
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Senegalese_Thieboudienne.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000015'; -- Tchep au poulet
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Senegalese_Thieboudienne.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000016'; -- Tchep viande olives
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Thieboudienne.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000017'; -- Tchep blanc poisson
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Red_Thieboudienne.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000018'; -- Tchep rouge poisson
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000019'; -- Vermicelles sénégalaises
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000020'; -- Couscous sénégalais
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000021'; -- Tajine de poulet
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000022'; -- Couscous Royal
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000023'; -- Couscous Marocain
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Couscous_Royal_Marocain.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000020'; -- Couscous sénégalais
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Moroccan_TAGINE.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000021'; -- Tajine de poulet
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Couscous_Royal_Marocain.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000022'; -- Couscous Royal
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Couscous_Royal_Marocain.JPG?width=600' WHERE id = '33333333-3000-0000-0000-000000000023'; -- Couscous Marocain
 
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Plats du monde (7.4e)
+-- ═══════════════════════════════════════════════════════════════════════════
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000001'; -- Colombo de porc
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000002'; -- Rôti de porc
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000003'; -- Mijoté de boulettes
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000004'; -- Bœuf sauté champignons noirs
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000005'; -- Fricassée de poulet
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Chicken_fricassee-01-2.JPG' WHERE id = '33333333-4000-0000-0000-000000000005'; -- Fricassée de poulet
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000006'; -- Poulet aux champignons
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000007'; -- Poulet chasseur
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000008'; -- Hachis parmentier
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000009'; -- Coq au vin
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000010'; -- Petit pois boulettes
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/4/46/Coq_au_riesling.JPG' WHERE id = '33333333-4000-0000-0000-000000000007'; -- Poulet chasseur
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/7/76/Shepherds_pie.JPG' WHERE id = '33333333-4000-0000-0000-000000000008'; -- Hachis parmentier
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/5/51/Coq_au_Vin_6of7_%288735164745%29.jpg' WHERE id = '33333333-4000-0000-0000-000000000009'; -- Coq au vin
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000010'; -- Petit pois boulettes
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000011'; -- Haricots rouges bœuf
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000012'; -- Steak de thon
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000013'; -- Rognons au Calvados
@@ -2121,63 +2132,68 @@ UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-1
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000022'; -- Paella sénégalaise
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000023'; -- Escalope poulet farcie
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000024'; -- Poisson papillote
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000025'; -- Souris d'agneau
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000026'; -- Ragoût d'ignames
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/0/09/Souris_d%27agneau.JPG' WHERE id = '33333333-4000-0000-0000-000000000025'; -- Souris d'agneau
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-4000-0000-0000-000000000026'; -- Ragoût d'ignames
 
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Accompagnements (7.4f)
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000001'; -- Riz blanc
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000002'; -- Foutou
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000003'; -- Placali
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000004'; -- Toh
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000005'; -- Frites
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000006'; -- Pommes de terre sautées
+-- ═══════════════════════════════════════════════════════════════════════════
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44c28?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000001'; -- Riz blanc
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_igname_accompagn%C3%A9_de_sauce_arachide.JPG?width=600' WHERE id = '33333333-5000-0000-0000-000000000002'; -- Foutou
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cuisine_de_C%C3%B4te_d%27Ivoire_-_Du_placali.JPG/600px-Cuisine_de_C%C3%B4te_d%27Ivoire_-_Du_placali.JPG' WHERE id = '33333333-5000-0000-0000-000000000003'; -- Placali
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-5000-0000-0000-000000000004'; -- Toh
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000005'; -- Frites
+UPDATE dishes SET photo_url = 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&w=600' WHERE id = '33333333-5000-0000-0000-000000000006'; -- Pommes de terre sautées
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000007'; -- Galettes pommes de terre
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000008'; -- Croquettes pomme de terre
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000009'; -- Croquettes d'ignames
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000010'; -- Ignames Araignée
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000011'; -- Attiéké
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000012'; -- Aloco
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000013'; -- Claclo
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000014'; -- Jardinière de légumes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000015'; -- Épinards sautés
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000016'; -- Spaghettis
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000017'; -- Riz au curry
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000018'; -- Riz cantonais
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000019'; -- Riz Pilaf
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-5000-0000-0000-000000000009'; -- Croquettes d'ignames
+UPDATE dishes SET photo_url = 'https://commons.wikimedia.org/wiki/Special:FilePath/Foutou_%C3%A0_la_sauce_graine.JPG?width=600' WHERE id = '33333333-5000-0000-0000-000000000010'; -- Ignames Araignée
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Attieke.JPG/600px-Attieke.JPG' WHERE id = '33333333-5000-0000-0000-000000000011'; -- Attiéké
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Alloko_%28frite_de_banane_platain%29_pr%C3%A8s.JPG/600px-Alloko_%28frite_de_banane_platain%29_pr%C3%A8s.JPG' WHERE id = '33333333-5000-0000-0000-000000000012'; -- Aloco
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Claclo.JPG/600px-Claclo.JPG' WHERE id = '33333333-5000-0000-0000-000000000013'; -- Claclo
+UPDATE dishes SET photo_url = 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600' WHERE id = '33333333-5000-0000-0000-000000000014'; -- Jardinière de légumes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580013759032-93f90a57750d?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000015'; -- Épinards sautés
+UPDATE dishes SET photo_url = 'https://images.pexels.com/photos/1373915/pexels-photo-1373915.jpeg?auto=compress&cs=tinysrgb&w=600' WHERE id = '33333333-5000-0000-0000-000000000016'; -- Spaghettis
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44c28?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000017'; -- Riz au curry
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000018'; -- Riz cantonais
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44c28?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000019'; -- Riz Pilaf
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000020'; -- Gratin dauphinois
 
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Desserts (7.4g)
+-- ═══════════════════════════════════════════════════════════════════════════
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000001'; -- Tarte au citron
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000002'; -- Gâteau aux pommes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1562007908-17c67e878c88?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000002'; -- Gâteau aux pommes
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000003'; -- Tarte à l'orange
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000004'; -- Moelleux à l'orange
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000005'; -- Beignets aux pommes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000006'; -- Beignets à la banane
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1562007908-17c67e878c88?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000004'; -- Moelleux à l'orange
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000005'; -- Beignets aux pommes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604495772376-9657f0035eb5?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000006'; -- Beignets à la banane
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000007'; -- Cake au citron
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000008'; -- Cake au chocolat
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000009'; -- Cake Marbré
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000009'; -- Cake Marbré
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000010'; -- Cake au yaourt
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000011'; -- Cake à la banane
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000012'; -- Tarte tatin mangue
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000013'; -- Gâteau à l'ananas
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000014'; -- Gâteau roulé confiture
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000015'; -- Madeleines
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000016'; -- Thiopati
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000017'; -- Beignets de carnaval
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000018'; -- Gbofotos
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/K%C3%A4%C3%A4retorttu.jpg/600px-K%C3%A4%C3%A4retorttu.jpg' WHERE id = '33333333-6000-0000-0000-000000000014'; -- Gâteau roulé confiture
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Madeleines_de_Commercy.jpg/600px-Madeleines_de_Commercy.jpg' WHERE id = '33333333-6000-0000-0000-000000000015'; -- Madeleines
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Nigerian-puff-puff-recipe_cropped.jpg/600px-Nigerian-puff-puff-recipe_cropped.jpg' WHERE id = '33333333-6000-0000-0000-000000000016'; -- Thiopati
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000017'; -- Beignets de carnaval
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Golden_Mikate%CC%81.jpg/600px-Golden_Mikate%CC%81.jpg' WHERE id = '33333333-6000-0000-0000-000000000018'; -- Gbofotos
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000019'; -- Yaourt façon Mily's
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000020'; -- Thiakry
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000021'; -- Brownies M&Ms
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Degue_from_Burkina_Faso.jpg/600px-Degue_from_Burkina_Faso.jpg' WHERE id = '33333333-6000-0000-0000-000000000020'; -- Thiakry
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000021'; -- Brownies M&Ms
 UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000022'; -- Mousse au chocolat
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000023'; -- Éclair au chocolat
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000024'; -- Chouquettes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1564093497595-593b96d80571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000025'; -- Salade de fruits
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000026'; -- Île flottante
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000027'; -- Flan au caramel
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000028'; -- Profiteroles
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000029'; -- Crêpes
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000030'; -- Churros
-UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000031'; -- Gaufres
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Eclair%28dessert%29.JPG' WHERE id = '33333333-6000-0000-0000-000000000023'; -- Éclair au chocolat
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Chouquettes.jpg/600px-Chouquettes.jpg' WHERE id = '33333333-6000-0000-0000-000000000024'; -- Chouquettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000025'; -- Salade de fruits
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Ujuvad_saarekesed.jpg/600px-Ujuvad_saarekesed.jpg' WHERE id = '33333333-6000-0000-0000-000000000026'; -- Île flottante
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Creme_Caramel_India.JPG/600px-Creme_Caramel_India.JPG' WHERE id = '33333333-6000-0000-0000-000000000027'; -- Flan au caramel
+UPDATE dishes SET photo_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Profiteroles_by_Star5112.jpg/600px-Profiteroles_by_Star5112.jpg' WHERE id = '33333333-6000-0000-0000-000000000028'; -- Profiteroles
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1635362825546-eb763064db11?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000029'; -- Crêpes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1624371414361-e670246e5ba3?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000030'; -- Churros
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000031'; -- Gaufres
+
 
 -- --------------------------------------------------------------------------
 -- 7.5 Ingrédients
