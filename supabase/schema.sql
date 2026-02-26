@@ -30,9 +30,6 @@ DO $$ BEGIN CREATE TYPE po_status_enum AS ENUM (
     'draft','ordered','partial','received','cancelled'
 ); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-DO $$ BEGIN CREATE TYPE notif_type_enum AS ENUM (
-    'info','success','warning','error'
-); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ============================================================================
 -- 3. TABLES
@@ -503,40 +500,41 @@ CREATE TABLE IF NOT EXISTS invoice_payments (
 );
 
 -- ----------------------------------------------------------------------------
--- 3.13 Notifications
+-- 3.14 Notifications
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS notifications (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     title      TEXT NOT NULL,
-    body       TEXT,
-    type       notif_type_enum NOT NULL DEFAULT 'info',
-    is_read    BOOLEAN NOT NULL DEFAULT false,
-    action_url TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    message    TEXT NOT NULL,
+    type       TEXT DEFAULT 'info'
+                   CHECK (type IN ('info','success','warning','error')),
+    is_read    BOOLEAN DEFAULT false,
+    link       TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ----------------------------------------------------------------------------
--- 3.14 Audit & Config
+-- 3.15 Audit & Config
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS audit_logs (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id    UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    user_id    UUID REFERENCES auth.users(id),
     action     TEXT NOT NULL,
     table_name TEXT,
     record_id  UUID,
     old_data   JSONB,
     new_data   JSONB,
-    ip_address INET,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    ip_address TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS app_config (
-    key         TEXT PRIMARY KEY,
-    value       TEXT,
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    key         TEXT UNIQUE NOT NULL,
+    value       JSONB NOT NULL,
     description TEXT,
-    updated_by  UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    updated_at  TIMESTAMPTZ DEFAULT now()
 );
 
 -- ============================================================================
@@ -1371,18 +1369,18 @@ ON CONFLICT (menu_id, dish_id, day_of_week) DO NOTHING;
 -- 7.9 Configuration applicative
 -- --------------------------------------------------------------------------
 INSERT INTO app_config (key, value, description) VALUES
-  ('app_name',             'MILY''S Gourmet',                                    'Nom de l''application'),
-  ('app_timezone',         'Africa/Abidjan',                                     'Fuseau horaire'),
-  ('app_currency',         'XOF',                                                'Devise (FCFA)'),
-  ('app_country',          'CI',                                                 'Code pays ISO'),
-  ('order_cutoff_midi',    '10:30',                                              'Heure limite commande déjeuner'),
-  ('delivery_target_midi', '12:30',                                              'Heure cible livraison déjeuner'),
-  ('tva_rate',             '18',                                                 'Taux TVA Côte d''Ivoire (%)'),
-  ('invoice_payment_days', '30',                                                 'Délai de paiement factures (jours)'),
-  ('max_advance_days',     '5',                                                  'Commandes max à l''avance (jours)'),
-  ('plan_deadline_day',    '4',                                                  'Jour limite planning semaine (4=jeudi)'),
-  ('plan_deadline_hour',   '18:00',                                              'Heure limite planning semaine'),
-  ('support_phone',        '+225 07 00 00 00 00',                               'Numéro support client'),
-  ('support_email',        'support@milys-gourmet.ci',                          'Email support client'),
-  ('milys_address',        'Cocody Riviera Palmeraie, Abidjan, Côte d''Ivoire', 'Adresse MILY''S')
+  ('app_name',             '"MILY''S Gourmet"',                                    'Nom de l''application'),
+  ('app_timezone',         '"Africa/Abidjan"',                                     'Fuseau horaire'),
+  ('app_currency',         '"XOF"',                                                'Devise (FCFA)'),
+  ('app_country',          '"CI"',                                                 'Code pays ISO'),
+  ('order_cutoff_midi',    '"10:30"',                                              'Heure limite commande déjeuner'),
+  ('delivery_target_midi', '"12:30"',                                              'Heure cible livraison déjeuner'),
+  ('tva_rate',             '18',                                                   'Taux TVA Côte d''Ivoire (%)'),
+  ('invoice_payment_days', '30',                                                   'Délai de paiement factures (jours)'),
+  ('max_advance_days',     '5',                                                    'Commandes max à l''avance (jours)'),
+  ('plan_deadline_day',    '4',                                                    'Jour limite planning semaine (4=jeudi)'),
+  ('plan_deadline_hour',   '"18:00"',                                              'Heure limite planning semaine'),
+  ('support_phone',        '"+225 07 00 00 00 00"',                               'Numéro support client'),
+  ('support_email',        '"support@milys-gourmet.ci"',                          'Email support client'),
+  ('milys_address',        '"Cocody Riviera Palmeraie, Abidjan, Côte d''Ivoire"', 'Adresse MILY''S')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
