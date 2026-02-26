@@ -79,6 +79,13 @@ CREATE TABLE IF NOT EXISTS company_contracts (
     max_meals_per_day  INTEGER NOT NULL DEFAULT 200,
     max_budget_monthly INTEGER,                         -- FCFA, NULL = illimité
     allowed_formulas   TEXT[] NOT NULL DEFAULT ARRAY['standard'],
+    working_days       INTEGER NOT NULL DEFAULT 5       -- 5 ou 6 jours ouvrés
+                           CHECK (working_days BETWEEN 5 AND 6),
+    payment_mode       TEXT NOT NULL DEFAULT 'invoice'
+                           CHECK (payment_mode IN ('invoice','tickets')),
+    tickets_per_month  INTEGER,                         -- NULL si mode facture
+    advance_weeks      INTEGER NOT NULL DEFAULT 2       -- Planification à N semaines
+                           CHECK (advance_weeks BETWEEN 1 AND 4),
     start_date         DATE NOT NULL,
     end_date           DATE,
     is_active          BOOLEAN NOT NULL DEFAULT true,
@@ -101,6 +108,9 @@ CREATE TABLE IF NOT EXISTS profiles (
     site_id       UUID REFERENCES company_sites(id) ON DELETE SET NULL,
     department    TEXT,
     badge_number  TEXT,
+    ticket_balance INTEGER NOT NULL DEFAULT 0,          -- Solde tickets restants
+    allergens     TEXT[] DEFAULT '{}',                   -- Allergènes déclarés
+    preferences   TEXT[] DEFAULT '{}',                   -- Préférences alimentaires
     is_active     BOOLEAN NOT NULL DEFAULT true,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -262,16 +272,17 @@ CREATE TABLE IF NOT EXISTS stock_movements (
 -- 3.5 Menus hebdomadaires
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS menus (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name         TEXT NOT NULL,
-    week_start   DATE NOT NULL,
-    week_end     DATE NOT NULL,
-    is_published BOOLEAN NOT NULL DEFAULT false,
-    published_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    notes        TEXT,
-    created_by   UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name               TEXT NOT NULL,
+    week_start         DATE NOT NULL,
+    week_end           DATE NOT NULL,
+    is_published       BOOLEAN NOT NULL DEFAULT false,
+    selection_deadline TIMESTAMPTZ,                     -- Date limite de sélection (J-3 avant premier jour)
+    published_by       UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    notes              TEXT,
+    created_by         UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE(week_start)
 );
 
@@ -279,7 +290,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     menu_id      UUID NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
     dish_id      UUID NOT NULL REFERENCES dishes(id) ON DELETE CASCADE,
-    day_of_week  INT NOT NULL CHECK (day_of_week BETWEEN 1 AND 5),  -- 1=Lun…5=Ven
+    day_of_week  INT NOT NULL CHECK (day_of_week BETWEEN 1 AND 6),  -- 1=Lun…6=Sam
     is_starter   BOOLEAN NOT NULL DEFAULT false,
     sort_order   INTEGER DEFAULT 0,
     max_quantity INTEGER,       -- NULL = illimité
@@ -291,22 +302,28 @@ CREATE TABLE IF NOT EXISTS menu_items (
 -- 3.6 Planning hebdomadaire employé
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS weekly_plans (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    menu_id    UUID NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
-    status     TEXT NOT NULL DEFAULT 'draft'
-                   CHECK (status IN ('draft','confirmed','locked')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    menu_id     UUID NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
+    status      TEXT NOT NULL DEFAULT 'draft'
+                    CHECK (status IN ('draft','confirmed','locked')),
+    locked_at   TIMESTAMPTZ,                           -- Date de verrouillage global
+    confirmed_at TIMESTAMPTZ,                          -- Date de validation par l'employé
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE(user_id, menu_id)
 );
 
 CREATE TABLE IF NOT EXISTS weekly_plan_items (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     weekly_plan_id UUID NOT NULL REFERENCES weekly_plans(id) ON DELETE CASCADE,
-    day_of_week    INT NOT NULL CHECK (day_of_week BETWEEN 1 AND 5),
+    day_of_week    INT NOT NULL CHECK (day_of_week BETWEEN 1 AND 6),
     dish_id        UUID NOT NULL REFERENCES dishes(id) ON DELETE RESTRICT,
+    extras         JSONB NOT NULL DEFAULT '[]',        -- [{dish_id, quantity, unit_price}]
+    is_locked      BOOLEAN NOT NULL DEFAULT false,     -- Verrouillé à J-3
+    locked_at      TIMESTAMPTZ,                        -- Quand le jour a été verrouillé
     is_cancelled   BOOLEAN NOT NULL DEFAULT false,
+    cancel_reason  TEXT,                               -- Raison obligatoire si annulé
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE(weekly_plan_id, day_of_week)
 );
@@ -326,6 +343,7 @@ CREATE TABLE IF NOT EXISTS orders (
     total_price    INTEGER NOT NULL DEFAULT 0,    -- FCFA total
     company_share  INTEGER NOT NULL DEFAULT 0,    -- part entreprise FCFA
     employee_share INTEGER NOT NULL DEFAULT 0,    -- part employé FCFA
+    ticket_used    BOOLEAN NOT NULL DEFAULT false,   -- Payé par ticket physique ?
     special_instructions TEXT,
     served_at      TIMESTAMPTZ,
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -2276,6 +2294,129 @@ VALUES
   ('66666666-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000002', 5, false, 2, 150),
   ('66666666-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000011', 5, false, 3, 120)
 ON CONFLICT (menu_id, dish_id, day_of_week) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.8b Menu semaine+1 (2–6 Mars 2026)
+-- --------------------------------------------------------------------------
+INSERT INTO menus (id, name, week_start, week_end, is_published, selection_deadline)
+VALUES
+  ('66666666-0000-0000-0000-000000000002',
+   'Menu semaine du 2 au 6 Mars 2026',
+   '2026-03-02', '2026-03-06', true,
+   '2026-02-27 18:00:00+00')
+ON CONFLICT (week_start) DO NOTHING;
+
+INSERT INTO menu_items (menu_id, dish_id, day_of_week, is_starter, sort_order, max_quantity)
+VALUES
+  -- Lundi 02/03
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000013', 1, true,  1, 100),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000001', 1, false, 2, 200),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000006', 1, false, 3, 150),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000009', 1, false, 4, 120),
+  -- Mardi 03/03
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000012', 2, true,  1,  80),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000002', 2, false, 2, 150),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000004', 2, false, 3, 150),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000010', 2, false, 4, 100),
+  -- Mercredi 04/03
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000013', 3, true,  1, 100),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000005', 3, false, 2, 180),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000008', 3, false, 3, 120),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000011', 3, false, 4, 100),
+  -- Jeudi 05/03
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000012', 4, true,  1,  80),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000001', 4, false, 2, 200),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000009', 4, false, 3, 150),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000004', 4, false, 4, 120),
+  -- Vendredi 06/03
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000013', 5, true,  1, 100),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000006', 5, false, 2, 200),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000002', 5, false, 3, 150),
+  ('66666666-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000005', 5, false, 4, 120)
+ON CONFLICT (menu_id, dish_id, day_of_week) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.8c Orders history for employe1@orange.ci (2 months)
+-- --------------------------------------------------------------------------
+INSERT INTO orders (id, user_id, dish_id, site_id, order_date, status, total_price, extras, special_instructions)
+VALUES
+  -- Février 2026 (semaine courante et passées)
+  ('77777777-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-02-23', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000002', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000004', '22222222-0000-0000-0000-000000000001', '2026-02-24', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000003', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000001', '2026-02-25', 'served', 5500, '[{"dish_id":"33333333-6000-0000-0000-000000000001","quantity":1,"unit_price":500}]', NULL),
+  ('77777777-0000-0000-0000-000000000004', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000006', '22222222-0000-0000-0000-000000000001', '2026-02-26', 'confirmed', 5300, '[{"dish_id":"33333333-7000-0000-0000-000000000001","quantity":1,"unit_price":300}]', NULL),
+  ('77777777-0000-0000-0000-000000000005', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000010', '22222222-0000-0000-0000-000000000001', '2026-02-27', 'confirmed', 5000, '[]', NULL),
+  -- Février (semaine du 16-20)
+  ('77777777-0000-0000-0000-000000000006', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000005', '22222222-0000-0000-0000-000000000001', '2026-02-16', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000007', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000008', '22222222-0000-0000-0000-000000000001', '2026-02-17', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000008', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-02-18', 'served', 5500, '[{"dish_id":"33333333-6000-0000-0000-000000000002","quantity":1,"unit_price":500}]', NULL),
+  ('77777777-0000-0000-0000-000000000009', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000009', '22222222-0000-0000-0000-000000000001', '2026-02-19', 'cancelled', 5000, '[]', 'Absent pour raison personnelle'),
+  ('77777777-0000-0000-0000-000000000010', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000001', '2026-02-20', 'served', 5000, '[]', NULL),
+  -- Février (semaine du 9-13)
+  ('77777777-0000-0000-0000-000000000011', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000004', '22222222-0000-0000-0000-000000000001', '2026-02-09', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000012', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000006', '22222222-0000-0000-0000-000000000001', '2026-02-10', 'served', 5800, '[{"dish_id":"33333333-6000-0000-0000-000000000001","quantity":1,"unit_price":500},{"dish_id":"33333333-7000-0000-0000-000000000001","quantity":1,"unit_price":300}]', NULL),
+  ('77777777-0000-0000-0000-000000000013', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000011', '22222222-0000-0000-0000-000000000001', '2026-02-11', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000014', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-02-12', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000015', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000005', '22222222-0000-0000-0000-000000000001', '2026-02-13', 'served', 5000, '[]', NULL),
+  -- Février (semaine du 2-6)
+  ('77777777-0000-0000-0000-000000000016', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000001', '2026-02-02', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000017', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000008', '22222222-0000-0000-0000-000000000001', '2026-02-03', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000018', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000010', '22222222-0000-0000-0000-000000000001', '2026-02-04', 'served', 5500, '[{"dish_id":"33333333-6000-0000-0000-000000000001","quantity":1,"unit_price":500}]', NULL),
+  ('77777777-0000-0000-0000-000000000019', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000004', '22222222-0000-0000-0000-000000000001', '2026-02-05', 'no_show', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000020', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-02-06', 'served', 5000, '[]', NULL),
+  -- Janvier 2026 (10 commandes)
+  ('77777777-0000-0000-0000-000000000021', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000006', '22222222-0000-0000-0000-000000000001', '2026-01-05', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000022', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-01-06', 'served', 5500, '[{"dish_id":"33333333-6000-0000-0000-000000000002","quantity":1,"unit_price":500}]', NULL),
+  ('77777777-0000-0000-0000-000000000023', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000009', '22222222-0000-0000-0000-000000000001', '2026-01-07', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000024', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000005', '22222222-0000-0000-0000-000000000001', '2026-01-08', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000025', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000001', '2026-01-09', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000026', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000011', '22222222-0000-0000-0000-000000000001', '2026-01-12', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000027', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000004', '22222222-0000-0000-0000-000000000001', '2026-01-13', 'served', 5800, '[{"dish_id":"33333333-6000-0000-0000-000000000001","quantity":1,"unit_price":500},{"dish_id":"33333333-7000-0000-0000-000000000001","quantity":1,"unit_price":300}]', NULL),
+  ('77777777-0000-0000-0000-000000000028', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000008', '22222222-0000-0000-0000-000000000001', '2026-01-14', 'served', 5000, '[]', NULL),
+  ('77777777-0000-0000-0000-000000000029', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', '2026-01-15', 'cancelled', 5000, '[]', 'Réunion externe'),
+  ('77777777-0000-0000-0000-000000000030', 'aaaaaaaa-0000-0000-0000-000000000005', '33333333-0000-0000-0000-000000000010', '22222222-0000-0000-0000-000000000001', '2026-01-16', 'served', 5000, '[]', NULL)
+ON CONFLICT (user_id, order_date) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.8d Weekly plans for employe1@orange.ci (current week)
+-- --------------------------------------------------------------------------
+INSERT INTO weekly_plans (id, user_id, menu_id, status, confirmed_at)
+VALUES
+  ('88888888-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000005',
+   '66666666-0000-0000-0000-000000000001', 'confirmed', '2026-02-19 14:30:00+00')
+ON CONFLICT (user_id, menu_id) DO NOTHING;
+
+INSERT INTO weekly_plan_items (weekly_plan_id, day_of_week, dish_id, is_locked, locked_at, extras)
+VALUES
+  ('88888888-0000-0000-0000-000000000001', 1, '33333333-0000-0000-0000-000000000004', true, '2026-02-20 00:00:00+00', '[]'),
+  ('88888888-0000-0000-0000-000000000001', 2, '33333333-0000-0000-0000-000000000001', true, '2026-02-21 00:00:00+00', '[]'),
+  ('88888888-0000-0000-0000-000000000001', 3, '33333333-0000-0000-0000-000000000002', true, '2026-02-22 00:00:00+00', '[{"dish_id":"33333333-6000-0000-0000-000000000001","quantity":1,"unit_price":500}]'),
+  ('88888888-0000-0000-0000-000000000001', 4, '33333333-0000-0000-0000-000000000006', true, '2026-02-23 00:00:00+00', '[{"dish_id":"33333333-7000-0000-0000-000000000001","quantity":1,"unit_price":300}]'),
+  ('88888888-0000-0000-0000-000000000001', 5, '33333333-0000-0000-0000-000000000002', true, '2026-02-24 00:00:00+00', '[]')
+ON CONFLICT (weekly_plan_id, day_of_week) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.8e Update contracts: Orange=invoice, TotalEnergies=tickets, SGBCI=invoice
+-- --------------------------------------------------------------------------
+UPDATE company_contracts
+SET working_days = 5, payment_mode = 'invoice', advance_weeks = 2
+WHERE company_id = '11111111-0000-0000-0000-000000000001';
+
+UPDATE company_contracts
+SET working_days = 5, payment_mode = 'tickets', tickets_per_month = 24, advance_weeks = 2
+WHERE company_id = '11111111-0000-0000-0000-000000000002';
+
+UPDATE company_contracts
+SET working_days = 5, payment_mode = 'invoice', advance_weeks = 2
+WHERE company_id = '11111111-0000-0000-0000-000000000003';
+
+-- Update ticket_balance for TotalEnergies employees
+UPDATE profiles SET ticket_balance = 18
+WHERE company_id = '11111111-0000-0000-0000-000000000002' AND is_active = true;
+
+-- Update selection_deadline for current week menu
+UPDATE menus SET selection_deadline = '2026-02-20 18:00:00+00'
+WHERE id = '66666666-0000-0000-0000-000000000001';
 
 -- --------------------------------------------------------------------------
 -- 7.9 Configuration applicative

@@ -13,28 +13,20 @@ export type UserRole =
   | "third_party_cashier"
   | "employee"
 
-export type OrderStatus =
-  | "pending"
-  | "confirmed"
-  | "in_preparation"
-  | "ready"
-  | "in_delivery"
-  | "delivered"
-  | "cancelled"
+export type OrderStatus = "confirmed" | "served" | "no_show" | "cancelled"
 
 export type DeliveryStatus =
-  | "pending"
-  | "assigned"
-  | "picked_up"
+  | "scheduled"
   | "in_transit"
   | "delivered"
   | "failed"
 
 export type PaymentStatus = "pending" | "partial" | "paid" | "overdue" | "refunded"
-export type PaymentMethod = "mobile_money" | "cash" | "bank_transfer" | "card"
+export type PaymentMethod = "salary_deduction" | "orange_money" | "wave" | "mtn_money" | "djamo" | "cash" | "ticket" | "bank_transfer"
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack"
-export type ContractType = "forfait" | "a_la_carte" | "mixed"
-export type StockMovementType = "in" | "out" | "adjustment" | "waste"
+export type ContractPaymentMode = "invoice" | "tickets"
+export type StockMovementType = "entry" | "exit" | "adjustment" | "waste" | "return"
+export type WeeklyPlanStatus = "draft" | "confirmed" | "locked"
 
 // ============================================================
 // COMPANY
@@ -43,12 +35,14 @@ export type StockMovementType = "in" | "out" | "adjustment" | "waste"
 export interface Company {
   id: string
   name: string
+  slug: string
   logo_url?: string
   industry?: string
   address?: string
   city: string
-  phone?: string
-  email?: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
   is_active: boolean
   created_at: string
   updated_at: string
@@ -62,7 +56,9 @@ export interface CompanySite {
   city: string
   latitude?: number
   longitude?: number
-  delivery_time?: string
+  capacity_per_day: number
+  delivery_window_start?: string
+  delivery_window_end?: string
   is_active: boolean
   created_at: string
   updated_at: string
@@ -72,12 +68,17 @@ export interface CompanySite {
 export interface CompanyContract {
   id: string
   company_id: string
-  contract_type: ContractType
+  subsidy_rate: number
+  base_meal_price: number
+  max_meals_per_day: number
+  max_budget_monthly?: number
+  allowed_formulas: string[]
+  working_days: number
+  payment_mode: ContractPaymentMode
+  tickets_per_month?: number
+  advance_weeks: number
   start_date: string
   end_date?: string
-  daily_budget_per_employee?: number
-  monthly_budget?: number
-  subsidy_percentage?: number
   is_active: boolean
   created_at: string
   updated_at: string
@@ -100,6 +101,9 @@ export interface Profile {
   site_id?: string
   badge_number?: string
   department?: string
+  ticket_balance: number
+  allergens: string[]
+  preferences: string[]
   is_active: boolean
   created_at: string
   updated_at: string
@@ -115,23 +119,31 @@ export interface Dish {
   id: string
   name: string
   description?: string
-  category: string
+  category: "ivoirien" | "international" | "entree" | "dessert" | "boisson" | "extra"
   price: number
-  image_url?: string
-  preparation_time?: number
+  cost_price?: number
+  photo_url?: string
+  is_available: boolean
+  is_starter: boolean
+  is_extra: boolean
+  preparation_time_min?: number
   calories?: number
   is_vegetarian: boolean
-  is_available: boolean
+  is_vegan: boolean
+  is_featured: boolean
+  sort_order: number
   created_at: string
   updated_at: string
 }
 
 export interface Menu {
   id: string
-  date: string
-  meal_type: MealType
-  site_id?: string
+  name: string
+  week_start: string
+  week_end: string
   is_published: boolean
+  selection_deadline?: string
+  notes?: string
   created_at: string
   updated_at: string
   items?: MenuItem[]
@@ -141,10 +153,48 @@ export interface MenuItem {
   id: string
   menu_id: string
   dish_id: string
-  is_main: boolean
-  quantity_available?: number
+  day_of_week: number
+  is_starter: boolean
+  sort_order: number
+  max_quantity?: number
+  created_at: string
+  dish?: Dish
+}
+
+// ============================================================
+// WEEKLY PLAN
+// ============================================================
+
+export interface ExtraItem {
+  dish_id: string
+  quantity: number
+  unit_price: number
+}
+
+export interface WeeklyPlan {
+  id: string
+  user_id: string
+  menu_id: string
+  status: WeeklyPlanStatus
+  locked_at?: string
+  confirmed_at?: string
   created_at: string
   updated_at: string
+  menu?: Menu
+  items?: WeeklyPlanItem[]
+}
+
+export interface WeeklyPlanItem {
+  id: string
+  weekly_plan_id: string
+  day_of_week: number
+  dish_id: string
+  extras: ExtraItem[]
+  is_locked: boolean
+  locked_at?: string
+  is_cancelled: boolean
+  cancel_reason?: string
+  created_at: string
   dish?: Dish
 }
 
@@ -155,29 +205,48 @@ export interface MenuItem {
 export interface Order {
   id: string
   user_id: string
-  menu_id: string
-  site_id?: string
-  status: OrderStatus
-  special_instructions?: string
-  total_amount: number
-  is_paid: boolean
-  created_at: string
-  updated_at: string
-  profile?: Profile
-  menu?: Menu
-  items?: OrderItem[]
-}
-
-export interface OrderItem {
-  id: string
-  order_id: string
   dish_id: string
-  quantity: number
-  unit_price: number
+  site_id?: string
+  order_date: string
+  extras: ExtraItem[]
+  status: OrderStatus
   total_price: number
+  company_share: number
+  employee_share: number
+  ticket_used: boolean
+  special_instructions?: string
+  served_at?: string
   created_at: string
   updated_at: string
   dish?: Dish
+  profile?: Profile
+}
+
+// ============================================================
+// QR CODE
+// ============================================================
+
+export interface QRCode {
+  id: string
+  user_id: string
+  order_id: string
+  code: string
+  is_used: boolean
+  expires_at: string
+  scanned_by?: string
+  scanned_at?: string
+  created_at: string
+}
+
+export interface QRScan {
+  id: string
+  qr_code_id: string
+  scanned_by: string
+  site_id?: string
+  scan_type: "qr" | "manual" | "ticket"
+  result: "success" | "already_used" | "expired" | "not_found"
+  scanned_at: string
+  notes?: string
 }
 
 // ============================================================
@@ -187,41 +256,32 @@ export interface OrderItem {
 export interface Invoice {
   id: string
   company_id: string
+  invoice_number: string
   period_start: string
   period_end: string
-  subtotal: number
-  tax_amount: number
   total_amount: number
-  status: PaymentStatus
+  total_meals?: number
+  status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
   due_date?: string
+  sent_at?: string
   paid_at?: string
+  pdf_url?: string
+  notes?: string
   created_at: string
-  updated_at: string
   company?: Company
-  items?: InvoiceItem[]
-  payments?: Payment[]
-}
-
-export interface InvoiceItem {
-  id: string
-  invoice_id: string
-  description: string
-  quantity: number
-  unit_price: number
-  total_price: number
-  created_at: string
-  updated_at: string
 }
 
 export interface Payment {
   id: string
-  invoice_id: string
+  user_id?: string
+  company_id?: string
   amount: number
-  method: PaymentMethod
+  payment_method: PaymentMethod
   reference?: string
-  paid_at: string
+  status: "pending" | "completed" | "failed" | "refunded"
+  payment_type: "employee" | "company" | "walk_in"
+  completed_at?: string
   created_at: string
-  updated_at: string
 }
 
 // ============================================================
@@ -230,27 +290,23 @@ export interface Payment {
 
 export interface Driver {
   id: string
-  profile_id: string
-  vehicle_type: string
-  license_plate?: string
+  full_name: string
+  phone: string
+  vehicle_info?: string
   is_available: boolean
   created_at: string
-  updated_at: string
-  profile?: Profile
 }
 
 export interface Delivery {
   id: string
-  order_id: string
-  driver_id?: string
+  delivery_date: string
   site_id: string
+  driver_id?: string
   status: DeliveryStatus
-  pickup_time?: string
-  delivery_time?: string
+  departure_time?: string
+  arrival_time?: string
   notes?: string
   created_at: string
-  updated_at: string
-  order?: Order
   driver?: Driver
   site?: CompanySite
 }
@@ -264,8 +320,10 @@ export interface Ingredient {
   name: string
   unit: string
   current_stock: number
-  min_stock_alert: number
+  min_stock: number
   cost_per_unit: number
+  category?: string
+  supplier_id?: string
   is_active: boolean
   created_at: string
   updated_at: string
@@ -276,10 +334,11 @@ export interface StockMovement {
   ingredient_id: string
   movement_type: StockMovementType
   quantity: number
+  balance_after?: number
   reason?: string
-  created_by: string
+  reference_id?: string
+  performed_by?: string
   created_at: string
-  updated_at: string
   ingredient?: Ingredient
 }
 
@@ -289,15 +348,14 @@ export interface StockMovement {
 
 export interface ProductionBatch {
   id: string
+  production_date: string
+  site_id: string
   dish_id: string
-  menu_id?: string
   planned_quantity: number
-  actual_quantity?: number
-  started_at?: string
-  completed_at?: string
-  notes?: string
+  produced_quantity?: number
+  status: "planned" | "in_progress" | "completed"
+  stock_deducted: boolean
   created_at: string
-  updated_at: string
   dish?: Dish
 }
 
@@ -314,20 +372,6 @@ export interface Notification {
   is_read: boolean
   link?: string
   created_at: string
-}
-
-// ============================================================
-// QR CODE
-// ============================================================
-
-export interface QRCode {
-  id: string
-  user_id: string
-  code: string
-  is_active: boolean
-  last_scanned_at?: string
-  created_at: string
-  updated_at: string
 }
 
 // ============================================================
@@ -363,5 +407,34 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   company_admin: "Admin Entreprise",
   company_cashier: "Caissier Entreprise",
   third_party_cashier: "Caissier Tiers",
-  employee: "Employé",
+  employee: "Employe",
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  confirmed: "Confirmee",
+  served: "Servie",
+  no_show: "Absent",
+  cancelled: "Annulee",
+}
+
+export const DAY_LABELS: Record<number, string> = {
+  1: "Lundi",
+  2: "Mardi",
+  3: "Mercredi",
+  4: "Jeudi",
+  5: "Vendredi",
+  6: "Samedi",
+}
+
+export const DAY_SHORT_LABELS: Record<number, string> = {
+  1: "Lun",
+  2: "Mar",
+  3: "Mer",
+  4: "Jeu",
+  5: "Ven",
+  6: "Sam",
 }

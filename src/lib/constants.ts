@@ -72,20 +72,51 @@ export const CASHIER_NAV = [
 
 // Order status labels and colors
 export const ORDER_STATUS_CONFIG = {
-  pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800" },
-  confirmed: { label: "Confirmée", color: "bg-blue-100 text-blue-800" },
-  in_preparation: { label: "En préparation", color: "bg-orange-100 text-orange-800" },
-  ready: { label: "Prête", color: "bg-green-100 text-green-800" },
-  in_delivery: { label: "En livraison", color: "bg-purple-100 text-purple-800" },
-  delivered: { label: "Livrée", color: "bg-gray-100 text-gray-800" },
-  cancelled: { label: "Annulée", color: "bg-red-100 text-red-800" },
-}
+  confirmed: { label: "Confirmee", color: "bg-blue-100 text-blue-800", icon: "Clock" },
+  served: { label: "Servie", color: "bg-green-100 text-green-800", icon: "CheckCircle2" },
+  no_show: { label: "Absent", color: "bg-yellow-100 text-yellow-800", icon: "UserX" },
+  cancelled: { label: "Annulee", color: "bg-red-100 text-red-800", icon: "XCircle" },
+} as const
 
 // Payment status labels and colors
 export const PAYMENT_STATUS_CONFIG = {
   pending: { label: "En attente", color: "bg-yellow-100 text-yellow-800" },
   partial: { label: "Partiel", color: "bg-orange-100 text-orange-800" },
-  paid: { label: "Payé", color: "bg-green-100 text-green-800" },
+  paid: { label: "Paye", color: "bg-green-100 text-green-800" },
   overdue: { label: "En retard", color: "bg-red-100 text-red-800" },
-  refunded: { label: "Remboursé", color: "bg-gray-100 text-gray-800" },
+  refunded: { label: "Rembourse", color: "bg-gray-100 text-gray-800" },
 }
+
+// Business rules
+export const LOCK_HOURS_BEFORE = 72 // J-3 = 72h avant le jour du repas
+export const BASE_MEAL_PRICE = 5000 // FCFA
+export const QR_VALID_START = "11:00"
+export const QR_VALID_END = "14:00"
+
+// Allergens list
+export const ALLERGEN_OPTIONS = [
+  "Arachides",
+  "Gluten",
+  "Lait",
+  "Oeufs",
+  "Poisson",
+  "Crustaces",
+  "Soja",
+  "Fruits a coque",
+  "Celeri",
+  "Moutarde",
+  "Sesame",
+  "Sulfites",
+]
+
+// Preference options
+export const PREFERENCE_OPTIONS = [
+  "Vegetarien",
+  "Vegan",
+  "Sans porc",
+  "Sans alcool",
+  "Halal",
+  "Faible en sel",
+  "Sans piment",
+  "Sans oignon",
+]
