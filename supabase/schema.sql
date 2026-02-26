@@ -1414,6 +1414,772 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- --------------------------------------------------------------------------
+-- 7.4b Catalogue complet — Entrées (42 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-1000-0000-0000-000000000001', 'Salade César',
+   'Laitue romaine, croûtons, parmesan, sauce César maison',
+   'entree', 1800, 650, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000002', 'Salade Niçoise',
+   'Salade composée, thon, œufs, olives, haricots verts, tomates',
+   'entree', 2000, 750, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000003', 'Salade de gésiers confits et ses croûtons',
+   'Gésiers de volaille confits, salade verte, croûtons dorés',
+   'entree', 2200, 900, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000004', 'Salade de foie de volaille et sauce citronnée',
+   'Foie de volaille poêlé, mesclun, vinaigrette au citron',
+   'entree', 2200, 900, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000005', 'Salade du Chef',
+   'Salade mixte, jambon, fromage, œuf, tomates, concombres',
+   'entree', 2000, 800, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000006', 'Salade Grecque',
+   'Tomates, concombres, poivrons, oignons, olives, feta',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000007', 'Farandole de crudités',
+   'Assortiment de légumes crus de saison, sauce au choix',
+   'entree', 1500, 500, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000008', 'Salade de carottes Thaï',
+   'Carottes râpées, sauce thaï, cacahuètes, coriandre',
+   'entree', 1500, 550, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000009', 'Salade de poulet croustillant épicé',
+   'Poulet pané croustillant, salade verte, sauce épicée',
+   'entree', 2500, 1000, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000010', 'Œufs Mimosas au Paprika',
+   'Œufs durs farcis, mayonnaise, paprika doux',
+   'entree', 1200, 400, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000011', 'Œufs en cocotte au jambon de dinde',
+   'Œufs cuits en cocotte, jambon de dinde, crème',
+   'entree', 1500, 550, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000012', 'Salade de lentilles au jambon de dinde',
+   'Lentilles vertes, jambon de dinde, vinaigrette moutardée',
+   'entree', 1800, 600, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000013', 'Salade d''avocat à la villageoise',
+   'Avocat frais, tomates, oignons, piment, citron vert',
+   'entree', 1500, 500, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000014', 'Salade d''avocat, crevettes et mangues',
+   'Avocat, crevettes sautées, mangue fraîche, vinaigrette exotique',
+   'entree', 2500, 1100, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000015', 'Salade de bœuf et œufs mollets',
+   'Bœuf grillé émincé, œufs mollets, salade mêlée',
+   'entree', 2500, 1000, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000016', 'Salade Piémontaise',
+   'Pommes de terre, tomates, jambon, cornichons, mayonnaise',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000017', 'Salade de maïs, tomate, poivrons et jambon de dinde',
+   'Maïs doux, tomates, poivrons, jambon de dinde, vinaigrette',
+   'entree', 1500, 550, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000018', 'Taboulé',
+   'Semoule, tomates, concombre, menthe, persil, citron',
+   'entree', 1500, 450, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000019', 'Salade d''attiéké à la bassamoise',
+   'Attiéké, tomates, oignons, piment, huile, à la façon de Grand-Bassam',
+   'entree', 1200, 400, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000020', 'Beignets à la sardine',
+   'Beignets frits garnis de sardine, oignons et épices',
+   'entree', 1000, 350, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000021', 'Tomates farcies aux dés de légumes',
+   'Tomates évidées, farcies de petits légumes et gratinées',
+   'entree', 1500, 500, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000022', 'Tarte à la tomate et au thon',
+   'Pâte brisée, tomates, thon, moutarde, herbes',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000023', 'Quiche au jambon',
+   'Pâte brisée, œufs, crème, jambon, fromage râpé',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000024', 'Tarte aux champignons',
+   'Pâte feuilletée, champignons de Paris, crème, persil',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000025', 'Tarte à l''oignon',
+   'Pâte brisée, oignons caramélisés, lardons, crème',
+   'entree', 1500, 550, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000026', 'Salade périgourdine',
+   'Salade frisée, gésiers confits, noix, croûtons, vinaigrette',
+   'entree', 2200, 850, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000027', 'Salade de tomates au pesto',
+   'Tomates fraîches, pesto basilic, mozzarella, huile d''olive',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000028', 'Salade asiatique de concombres',
+   'Concombres marinés, sauce soja, sésame, gingembre',
+   'entree', 1200, 400, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000029', 'Salade d''avocat et poulet grillé',
+   'Avocat frais, poulet grillé, tomates cerises, roquette',
+   'entree', 2500, 950, true, true, true, false),
+  ('33333333-1000-0000-0000-000000000030', 'Salade de haricots verts au thon',
+   'Haricots verts, thon, œufs durs, oignons, vinaigrette',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000031', 'Salade Lyonnaise',
+   'Frisée, lardons, œuf poché, croûtons, vinaigrette tiède',
+   'entree', 2000, 800, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000032', 'Œufs de Moumar',
+   'Œufs préparés à la façon de Moumar, épices locales',
+   'entree', 1500, 500, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000033', 'Courgettes farcies',
+   'Courgettes évidées, farcies de viande hachée et gratinées',
+   'entree', 2000, 750, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000034', 'Salade de langue de bœuf',
+   'Langue de bœuf en tranches, cornichons, vinaigrette',
+   'entree', 2500, 1000, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000035', 'Quiche aux crevettes',
+   'Pâte brisée, crevettes, crème, aneth, fromage',
+   'entree', 2200, 900, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000036', 'Quiche aux écrevisses',
+   'Pâte brisée, écrevisses, crème fraîche, ciboulette',
+   'entree', 2500, 1100, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000037', 'Quiche lorraine',
+   'Pâte brisée, lardons, œufs, crème, fromage',
+   'entree', 1800, 650, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000038', 'Avocats, pamplemousse et crevettes',
+   'Demi-avocat garni de pamplemousse et crevettes, sauce cocktail',
+   'entree', 2500, 1000, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000039', 'Velouté de courges',
+   'Soupe crémeuse de courges, crème fraîche, graines de courge',
+   'entree', 1500, 450, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000040', 'Salade de concombres à la thaïlandaise',
+   'Concombres, sauce thaï sucrée-pimentée, cacahuètes, menthe',
+   'entree', 1200, 400, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000041', 'Aumônière de crêpes au jambon de dinde',
+   'Crêpe farcie au jambon de dinde, béchamel, gratinée',
+   'entree', 2000, 750, true, false, true, false),
+  ('33333333-1000-0000-0000-000000000042', 'Crêpes roulées au jambon et champignons persillés',
+   'Crêpes garnies de jambon, champignons persillés, sauce crème',
+   'entree', 2000, 750, true, false, true, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4c Catalogue complet — Sauces traditionnelles (31 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-2000-0000-0000-000000000001', 'Sauce djoumgblé',
+   'Sauce traditionnelle ivoirienne (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 3000, 1200, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000002', 'Sauce gouagouassou',
+   'Sauce au gombo sec pilé (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000003', 'Sauce gombo',
+   'Sauce à base de gombo frais (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 2500, 1000, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000004', 'Sauce Kopê',
+   'Sauce ivoirienne à base de graines (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000005', 'Sauce kwala',
+   'Sauce traditionnelle aux feuilles (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000006', 'Sauce graine',
+   'Sauce à base de noix de palme (viande fumée ou poisson fumé)',
+   'ivoirien', 3000, 1200, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000007', 'Sauce claire',
+   'Bouillon parfumé aux épices (poisson frais ou poisson fumé)',
+   'ivoirien', 2500, 900, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000008', 'Soumara Lafri',
+   'Sauce à base de soumara (graines de néré fermentées)',
+   'ivoirien', 2500, 950, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000009', 'Soupe du pêcheur',
+   'Soupe riche aux fruits de mer : seiche, écrevisses, escargots, poisson',
+   'ivoirien', 3500, 1500, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000010', 'Sauce Arachide',
+   'Sauce à base de pâte d''arachide (viande fumée, poisson fumé ou poulet fumé)',
+   'ivoirien', 2800, 1100, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000011', 'Sauce Arachide-Dah',
+   'Sauce arachide aux feuilles de dah (viande fumée)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000012', 'Sauce pistache',
+   'Sauce à base de graines de pistache (viande fumée ou pondeuse)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000013', 'Biokesseu',
+   'Spécialité ivoirienne à base de feuilles et de poisson',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000014', 'Sauce N''tro',
+   'Sauce ivoirienne épicée (viande fumée ou poisson fumé)',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000015', 'Sauce Akpi',
+   'Sauce aux graines d''akpi (viande fumée ou poulet fumé)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000016', 'Akpessi',
+   'Plat ivoirien à base d''igname ou banane plantain et poisson',
+   'ivoirien', 2500, 950, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000017', 'Citrouille de crabes',
+   'Citrouille mijotée aux crabes frais, épices locales',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000018', 'Sauce feuille',
+   'Sauce aux feuilles vertes (viande fumée, poisson fumé, crevettes, crabes)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000019', 'Kédjénou',
+   'Viande ou volaille mijotée à l''étouffée (pondeuse ou poulet fumé)',
+   'ivoirien', 3500, 1400, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000020', 'Pépésoupe de carpes',
+   'Soupe pimentée de carpes fraîches aux épices',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000021', 'Pépésoupe de tripes',
+   'Soupe pimentée de tripes de bœuf aux épices',
+   'ivoirien', 2500, 1000, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000022', 'Kédjénou de pintade au vin rouge',
+   'Pintade mijotée à l''étouffée, vin rouge, légumes',
+   'ivoirien', 4500, 1800, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000023', 'Pépésoupe de pâtes de bœuf',
+   'Soupe épicée aux pâtes de bœuf, piment et aromates',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000024', 'Sauce Mafé',
+   'Sauce sénégalaise à l''arachide (viande fumée ou poulet fumé)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000025', 'Soupou Kandia',
+   'Sauce sénégalaise au gombo (viande fumée, poisson fumé)',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000026', 'Yassa de poulet',
+   'Poulet mariné au citron et oignons caramélisés, spécialité sénégalaise',
+   'ivoirien', 3500, 1400, true, true, false, false),
+  ('33333333-2000-0000-0000-000000000027', 'Yassa de poisson',
+   'Poisson mariné au citron et oignons fondants, spécialité sénégalaise',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000028', 'Tchiou boulettes',
+   'Boulettes de viande en sauce traditionnelle épicée',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000029', 'Sauce moyo',
+   'Sauce à la tomate et oignons (poisson frit)',
+   'ivoirien', 2500, 950, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000030', 'Sauce tomate au gingembre et gombo',
+   'Sauce tomate relevée au gingembre avec gombo (poisson)',
+   'ivoirien', 2500, 950, true, false, false, false),
+  ('33333333-2000-0000-0000-000000000031', 'Sauce dja',
+   'Sauce épicée aux escargots, crevettes et viande',
+   'ivoirien', 3500, 1400, true, false, false, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4d Catalogue complet — Plats africains (23 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-3000-0000-0000-000000000001', 'Choukouya de poulet',
+   'Poulet grillé aux épices, marinade traditionnelle',
+   'ivoirien', 3000, 1200, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000002', 'Poulet braisé',
+   'Poulet mariné et braisé au charbon de bois',
+   'ivoirien', 3500, 1400, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000003', 'Poulet sauté à l''ivoirienne',
+   'Poulet sauté aux oignons, tomates et piments, style ivoirien',
+   'ivoirien', 3500, 1300, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000004', 'Brochettes de poulet',
+   'Poulet mariné en brochettes, grillé aux épices',
+   'ivoirien', 2500, 1000, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000005', 'Choukouya de porc',
+   'Porc grillé aux épices, marinade traditionnelle',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000006', 'Porc braisé',
+   'Porc mariné et braisé au charbon de bois',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000007', 'Porc au four',
+   'Rôti de porc cuit lentement au four, épices locales',
+   'ivoirien', 4000, 1600, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000008', 'Poisson fumé braisé',
+   'Poisson fumé grillé au charbon, marinade épicée',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000009', 'Djenkoumé',
+   'Pâte de maïs togolaise accompagnée de sauce tomate épicée',
+   'ivoirien', 2500, 900, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000010', 'Feijoada togolaise',
+   'Ragoût de haricots rouges à la togolaise, viande et épices',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000011', 'Choukouya de viande de bœuf',
+   'Bœuf grillé aux épices, marinade traditionnelle',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000012', 'Jarret de bœuf braisé',
+   'Jarret de bœuf mijoté longuement, tendre et parfumé',
+   'ivoirien', 4500, 1800, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000013', 'Brochettes de Kefta',
+   'Viande hachée épicée en brochettes, grillée au charbon',
+   'ivoirien', 2800, 1100, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000014', 'APF',
+   'Attiéké, poisson frit — classique de la cuisine ivoirienne',
+   'ivoirien', 2500, 1000, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000015', 'Tchep au poulet',
+   'Riz au gras sénégalais cuit avec du poulet et des légumes',
+   'ivoirien', 3500, 1400, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000016', 'Tchep à la viande et aux olives',
+   'Thiéboudienne à la viande, olives et légumes',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000017', 'Tchep blanc au poisson',
+   'Riz blanc sénégalais au poisson et légumes',
+   'ivoirien', 3000, 1200, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000018', 'Tchep rouge au poisson',
+   'Thiéboudienne rouge au poisson, tomate, légumes',
+   'ivoirien', 3500, 1400, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000019', 'Vermicelles sénégalaises',
+   'Vermicelles au poulet et safran, spécialité sénégalaise',
+   'ivoirien', 3000, 1100, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000020', 'Couscous sénégalais',
+   'Couscous de mil, viande rôtie et sauce oignon',
+   'ivoirien', 3500, 1400, true, false, false, false),
+  ('33333333-3000-0000-0000-000000000021', 'Tajine de poulet au citron confit',
+   'Tajine marocain, poulet, citron confit, olives',
+   'ivoirien', 4000, 1600, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000022', 'Couscous Royal',
+   'Couscous garni de merguez, brochettes, poulet et légumes',
+   'ivoirien', 5000, 2000, true, true, false, false),
+  ('33333333-3000-0000-0000-000000000023', 'Couscous Marocain',
+   'Semoule de couscous, légumes variés, viande, bouillon parfumé',
+   'ivoirien', 4500, 1800, true, false, false, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4e Catalogue complet — Plats du monde (26 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-4000-0000-0000-000000000001', 'Colombo de porc',
+   'Porc mijoté au colombo, pommes de terre, légumes',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000002', 'Rôti de porc',
+   'Rôti de porc au four, jus de cuisson, herbes',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000003', 'Mijoté de boulettes de viande',
+   'Boulettes de viande hachée mijotées en sauce tomate',
+   'international', 3500, 1300, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000004', 'Bœuf sauté aux champignons noirs',
+   'Emincé de bœuf sauté, champignons noirs, sauce soja',
+   'international', 4500, 1800, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000005', 'Fricassée de poulet',
+   'Poulet mijoté en sauce blanche, champignons, carottes',
+   'international', 3500, 1400, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000006', 'Poulet aux champignons',
+   'Suprême de poulet, sauce crème aux champignons',
+   'international', 3500, 1400, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000007', 'Poulet chasseur',
+   'Poulet mijoté sauce chasseur, tomates, champignons, vin blanc',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000008', 'Hachis parmentier',
+   'Purée de pommes de terre gratinée sur viande hachée',
+   'international', 3000, 1100, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000009', 'Coq au vin et aux champignons',
+   'Coq mijoté au vin rouge, lardons, champignons, oignons grelots',
+   'international', 5000, 2000, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000010', 'Petit pois aux boulettes de viande',
+   'Boulettes de viande mijotées avec petits pois en sauce',
+   'international', 3000, 1100, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000011', 'Haricots rouges au bœuf',
+   'Ragoût de haricots rouges et bœuf mijoté',
+   'international', 3000, 1200, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000012', 'Steak de thon rôti',
+   'Pavé de thon snacké, sauce vierge ou soja',
+   'international', 5000, 2200, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000013', 'Rognons au Calvados',
+   'Rognons de veau flambés au Calvados, sauce crème',
+   'international', 4500, 1800, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000014', 'Poulet rôti et ses petits légumes',
+   'Poulet entier rôti au four, légumes de saison',
+   'international', 3500, 1400, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000015', 'Bœuf stroganoff',
+   'Émincé de bœuf, sauce crème, champignons, paprika',
+   'international', 4500, 1800, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000016', 'Gigot rôti aux fines herbes',
+   'Gigot d''agneau rôti, thym, romarin, ail',
+   'international', 5500, 2400, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000017', 'Poulet farci aux champignons',
+   'Poulet farci d''une farce aux champignons, cuit au four',
+   'international', 4500, 1800, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000018', 'Gratin de pâtes à la viande hachée',
+   'Pâtes gratinées, sauce bolognaise, fromage fondu',
+   'international', 3000, 1100, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000019', 'Boulettes de poulet teriyaki',
+   'Boulettes de poulet, sauce teriyaki sucrée-salée, sésame',
+   'international', 3500, 1300, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000020', 'Poulet pané',
+   'Filet de poulet pané croustillant, sauce au choix',
+   'international', 3000, 1100, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000021', 'Riz aux crevettes et au bœuf',
+   'Riz sauté aux crevettes et bœuf, légumes wok',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000022', 'Paella à la sénégalaise',
+   'Riz aux fruits de mer et poulet, épices sénégalaises',
+   'international', 4500, 1800, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000023', 'Escalope de poulet farcie aux champignons',
+   'Escalope de poulet farcie de champignons, sauce crème',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000024', 'Poisson papillote',
+   'Filet de poisson cuit en papillote, légumes et herbes',
+   'international', 4000, 1600, true, false, false, false),
+  ('33333333-4000-0000-0000-000000000025', 'Souris d''agneau rôtie au romarin',
+   'Souris d''agneau confite au four, romarin, jus corsé',
+   'international', 5500, 2400, true, true, false, false),
+  ('33333333-4000-0000-0000-000000000026', 'Ragoût d''ignames',
+   'Ignames mijotées en sauce avec viande et légumes',
+   'international', 3000, 1100, true, false, false, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4f Catalogue complet — Accompagnements (20 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-5000-0000-0000-000000000001', 'Riz blanc',
+   'Riz blanc nature cuit à la vapeur',
+   'extra', 500, 150, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000002', 'Foutou',
+   'Pâte pilée de banane plantain et manioc',
+   'extra', 800, 250, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000003', 'Placali',
+   'Pâte de manioc fermentée, accompagnement traditionnel',
+   'extra', 600, 200, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000004', 'Toh',
+   'Pâte de maïs ou mil, accompagnement traditionnel',
+   'extra', 600, 200, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000005', 'Frites de pommes de terre',
+   'Pommes de terre frites croustillantes',
+   'extra', 800, 300, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000006', 'Pommes de terre sautées au persil',
+   'Pommes de terre rissolées, persil frais',
+   'extra', 800, 300, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000007', 'Galettes de pommes de terre',
+   'Galettes croustillantes de pommes de terre râpées',
+   'extra', 800, 300, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000008', 'Croquettes de pomme de terre',
+   'Croquettes panées de purée de pommes de terre',
+   'extra', 1000, 350, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000009', 'Croquettes d''ignames',
+   'Croquettes d''igname pilée, frites dorées',
+   'extra', 1000, 350, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000010', 'Ignames Araignée',
+   'Ignames frites en forme d''araignée croustillante',
+   'extra', 800, 300, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000011', 'Attiéké',
+   'Semoule de manioc fermentée, garniture classique ivoirienne',
+   'extra', 500, 150, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000012', 'Aloco',
+   'Banane plantain mûre frite',
+   'extra', 800, 250, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000013', 'Claclo',
+   'Beignets de banane plantain râpée, frits',
+   'extra', 800, 250, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000014', 'Jardinière de légumes',
+   'Assortiment de légumes de saison sautés',
+   'extra', 1000, 350, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000015', 'Épinards sautés',
+   'Épinards frais sautés à l''ail',
+   'extra', 800, 300, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000016', 'Spaghettis ou autres pâtes',
+   'Pâtes cuites al dente, beurre ou sauce au choix',
+   'extra', 800, 250, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000017', 'Riz au curry',
+   'Riz parfumé au curry jaune',
+   'extra', 800, 250, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000018', 'Riz cantonais',
+   'Riz sauté aux légumes, œuf, petits pois',
+   'extra', 1200, 450, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000019', 'Riz Pilaf au cari et aux légumes',
+   'Riz pilaf parfumé au cari, mélange de légumes',
+   'extra', 1200, 450, true, false, false, true),
+  ('33333333-5000-0000-0000-000000000020', 'Gratin dauphinois',
+   'Pommes de terre en fines tranches, crème, fromage gratiné',
+   'extra', 1500, 550, true, false, false, true)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4g Catalogue complet — Desserts (31 plats)
+-- --------------------------------------------------------------------------
+INSERT INTO dishes (id, name, description, category, price, cost_price, is_available, is_featured, is_starter, is_extra)
+VALUES
+  ('33333333-6000-0000-0000-000000000001', 'Tarte au citron',
+   'Pâte sablée, crème au citron, meringue',
+   'dessert', 1500, 500, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000002', 'Gâteau aux pommes renversées',
+   'Gâteau moelleux, pommes caramélisées',
+   'dessert', 1500, 500, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000003', 'Tarte à l''orange',
+   'Pâte sablée, crème à l''orange fraîche',
+   'dessert', 1500, 500, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000004', 'Moelleux à l''orange',
+   'Gâteau fondant parfumé à l''orange',
+   'dessert', 1200, 400, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000005', 'Beignets aux pommes',
+   'Rondelles de pomme en pâte à beignet, cannelle, sucre',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000006', 'Beignets à la banane',
+   'Banane en pâte à beignet dorée, sucre glace',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000007', 'Cake au citron et au miel',
+   'Cake moelleux parfumé au citron et miel',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000008', 'Cake au chocolat',
+   'Cake fondant au chocolat noir',
+   'dessert', 1000, 350, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000009', 'Cake Marbré',
+   'Cake vanille et chocolat marbré',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000010', 'Cake au yaourt',
+   'Cake léger au yaourt nature',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000011', 'Cake à la banane',
+   'Banana bread moelleux à la banane mûre',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000012', 'Tarte tatin à la mangue',
+   'Tarte renversée à la mangue caramélisée',
+   'dessert', 1500, 550, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000013', 'Gâteau à l''ananas',
+   'Gâteau renversé à l''ananas frais caramélisé',
+   'dessert', 1200, 400, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000014', 'Gâteau roulé à la confiture',
+   'Génoise roulée garnie de confiture',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000015', 'Madeleines',
+   'Petits gâteaux moelleux en forme de coquillage',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000016', 'Thiopati',
+   'Beignets sénégalais sucrés, parfumés à la fleur d''oranger',
+   'dessert', 500, 150, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000017', 'Beignets de carnaval',
+   'Beignets soufflés croustillants, sucre glace',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000018', 'Gbofotos',
+   'Beignets ivoiriens sucrés, moelleux et dorés',
+   'dessert', 500, 150, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000019', 'Yaourt à la façon Mily''s',
+   'Yaourt maison crémeux, parfumé selon la recette Mily''s',
+   'dessert', 800, 250, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000020', 'Thiakry',
+   'Couscous de mil sucré au lait caillé, vanille',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000021', 'Brownies aux M&Ms',
+   'Brownies fondants au chocolat, éclats de M&Ms',
+   'dessert', 1200, 400, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000022', 'Mousse au chocolat',
+   'Mousse aérienne au chocolat noir',
+   'dessert', 1200, 400, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000023', 'Éclair au chocolat',
+   'Pâte à choux, crème pâtissière chocolat, glaçage',
+   'dessert', 1500, 550, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000024', 'Chouquettes',
+   'Petits choux croustillants au sucre perlé',
+   'dessert', 500, 150, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000025', 'Salade de fruits',
+   'Assortiment de fruits frais de saison',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000026', 'Île flottante',
+   'Meringue pochée sur crème anglaise, caramel',
+   'dessert', 1500, 550, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000027', 'Flan au caramel',
+   'Flan aux œufs, nappé de caramel',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000028', 'Profiteroles',
+   'Choux garnis de glace vanille, sauce chocolat chaud',
+   'dessert', 1800, 650, true, true, false, false),
+  ('33333333-6000-0000-0000-000000000029', 'Crêpes (sucre, miel, chocolat)',
+   'Crêpes fines au choix : sucre, miel ou chocolat',
+   'dessert', 800, 250, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000030', 'Churros',
+   'Bâtonnets de pâte frite, sucre et cannelle, sauce chocolat',
+   'dessert', 1000, 350, true, false, false, false),
+  ('33333333-6000-0000-0000-000000000031', 'Gaufres',
+   'Gaufres croustillantes, sucre glace ou garniture au choix',
+   'dessert', 1000, 350, true, false, false, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.4h Photos des plats — URLs Unsplash
+-- --------------------------------------------------------------------------
+-- Original dishes (7.4)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000001'; -- Attiéké Poulet Grillé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000002'; -- Poulet DG
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000003'; -- Kedjenou de Poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000004'; -- Foutou Sauce Graine
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000005'; -- Riz Sauce Tomate Poisson
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000006'; -- Garba
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000007'; -- Alloco Omelette
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000008'; -- Sauce Gombo + Riz
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000009'; -- Placali Sauce Arachide
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000010'; -- Riz Djoumblé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000011'; -- Tilapia Braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000012'; -- Salade Composée
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000013'; -- Beignets Haricots
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000014'; -- Gâteau Ananas
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=400&fit=crop' WHERE id = '33333333-0000-0000-0000-000000000015'; -- Bissap Maison
+
+-- Entrées (7.4b)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000001'; -- Salade César
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000002'; -- Salade Niçoise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000003'; -- Salade de gésiers confits
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000004'; -- Salade de foie de volaille
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000005'; -- Salade du Chef
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1551248429-40975aa4de74?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000006'; -- Salade Grecque
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000007'; -- Farandole de crudités
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000008'; -- Salade de carottes Thaï
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604497181015-76590d828b75?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000009'; -- Salade de poulet croustillant
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000010'; -- Œufs Mimosas
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000011'; -- Œufs en cocotte
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000012'; -- Salade de lentilles
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000013'; -- Salade d'avocat villageoise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000014'; -- Salade d'avocat crevettes mangues
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000015'; -- Salade de bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000016'; -- Salade Piémontaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000017'; -- Salade de maïs
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000018'; -- Taboulé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000019'; -- Salade d'attiéké
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000020'; -- Beignets à la sardine
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1560717789-0ac7c58ac90a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000021'; -- Tomates farcies
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1559564484-e48b3e040ff4?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000022'; -- Tarte tomate thon
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000023'; -- Quiche au jambon
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000024'; -- Tarte aux champignons
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1506280754576-f6fa8a873550?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000025'; -- Tarte à l'oignon
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000026'; -- Salade périgourdine
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000027'; -- Salade de tomates pesto
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000028'; -- Salade asiatique concombres
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000029'; -- Salade avocat poulet grillé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000030'; -- Salade haricots verts thon
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000031'; -- Salade Lyonnaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000032'; -- Œufs de Moumar
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1560717789-0ac7c58ac90a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000033'; -- Courgettes farcies
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000034'; -- Salade de langue de bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000035'; -- Quiche aux crevettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000036'; -- Quiche aux écrevisses
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000037'; -- Quiche lorraine
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000038'; -- Avocats pamplemousse crevettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000039'; -- Velouté de courges
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000040'; -- Salade concombres thaïlandaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000041'; -- Aumônière de crêpes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-1000-0000-0000-000000000042'; -- Crêpes roulées
+
+-- Sauces traditionnelles (7.4c)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000001'; -- Sauce djoumgblé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000002'; -- Sauce gouagouassou
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000003'; -- Sauce gombo
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000004'; -- Sauce Kopê
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000005'; -- Sauce kwala
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000006'; -- Sauce graine
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000007'; -- Sauce claire
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000008'; -- Soumara Lafri
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000009'; -- Soupe du pêcheur
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000010'; -- Sauce Arachide
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000011'; -- Sauce Arachide-Dah
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000012'; -- Sauce pistache
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000013'; -- Biokesseu
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000014'; -- Sauce N'tro
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000015'; -- Sauce Akpi
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000016'; -- Akpessi
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000017'; -- Citrouille de crabes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000018'; -- Sauce feuille
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000019'; -- Kédjénou
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000020'; -- Pépésoupe de carpes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000021'; -- Pépésoupe de tripes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000022'; -- Kédjénou de pintade
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000023'; -- Pépésoupe de pâtes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000024'; -- Sauce Mafé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000025'; -- Soupou Kandia
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000026'; -- Yassa de poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000027'; -- Yassa de poisson
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000028'; -- Tchiou boulettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000029'; -- Sauce moyo
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000030'; -- Sauce tomate gingembre gombo
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600&h=400&fit=crop' WHERE id = '33333333-2000-0000-0000-000000000031'; -- Sauce dja
+
+-- Plats africains (7.4d)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000001'; -- Choukouya de poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000002'; -- Poulet braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000003'; -- Poulet sauté
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000004'; -- Brochettes de poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000005'; -- Choukouya de porc
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000006'; -- Porc braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000007'; -- Porc au four
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000008'; -- Poisson fumé braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000009'; -- Djenkoumé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000010'; -- Feijoada togolaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000011'; -- Choukouya de bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000012'; -- Jarret de bœuf braisé
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000013'; -- Brochettes de Kefta
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000014'; -- APF
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000015'; -- Tchep au poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000016'; -- Tchep viande olives
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000017'; -- Tchep blanc poisson
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000018'; -- Tchep rouge poisson
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000019'; -- Vermicelles sénégalaises
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000020'; -- Couscous sénégalais
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000021'; -- Tajine de poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000022'; -- Couscous Royal
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-3000-0000-0000-000000000023'; -- Couscous Marocain
+
+-- Plats du monde (7.4e)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000001'; -- Colombo de porc
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000002'; -- Rôti de porc
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000003'; -- Mijoté de boulettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000004'; -- Bœuf sauté champignons noirs
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000005'; -- Fricassée de poulet
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000006'; -- Poulet aux champignons
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000007'; -- Poulet chasseur
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000008'; -- Hachis parmentier
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000009'; -- Coq au vin
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000010'; -- Petit pois boulettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000011'; -- Haricots rouges bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000012'; -- Steak de thon
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000013'; -- Rognons au Calvados
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000014'; -- Poulet rôti
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000015'; -- Bœuf stroganoff
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000016'; -- Gigot rôti
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000017'; -- Poulet farci champignons
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000018'; -- Gratin de pâtes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000019'; -- Boulettes poulet teriyaki
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604497181015-76590d828b75?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000020'; -- Poulet pané
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000021'; -- Riz crevettes bœuf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000022'; -- Paella sénégalaise
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000023'; -- Escalope poulet farcie
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000024'; -- Poisson papillote
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000025'; -- Souris d'agneau
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-4000-0000-0000-000000000026'; -- Ragoût d'ignames
+
+-- Accompagnements (7.4f)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000001'; -- Riz blanc
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000002'; -- Foutou
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000003'; -- Placali
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000004'; -- Toh
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000005'; -- Frites
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000006'; -- Pommes de terre sautées
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000007'; -- Galettes pommes de terre
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000008'; -- Croquettes pomme de terre
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000009'; -- Croquettes d'ignames
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000010'; -- Ignames Araignée
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000011'; -- Attiéké
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000012'; -- Aloco
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000013'; -- Claclo
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000014'; -- Jardinière de légumes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000015'; -- Épinards sautés
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000016'; -- Spaghettis
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000017'; -- Riz au curry
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000018'; -- Riz cantonais
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44726?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000019'; -- Riz Pilaf
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&h=400&fit=crop' WHERE id = '33333333-5000-0000-0000-000000000020'; -- Gratin dauphinois
+
+-- Desserts (7.4g)
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000001'; -- Tarte au citron
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000002'; -- Gâteau aux pommes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000003'; -- Tarte à l'orange
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000004'; -- Moelleux à l'orange
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000005'; -- Beignets aux pommes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000006'; -- Beignets à la banane
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000007'; -- Cake au citron
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000008'; -- Cake au chocolat
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000009'; -- Cake Marbré
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000010'; -- Cake au yaourt
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000011'; -- Cake à la banane
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000012'; -- Tarte tatin mangue
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000013'; -- Gâteau à l'ananas
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000014'; -- Gâteau roulé confiture
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000015'; -- Madeleines
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000016'; -- Thiopati
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000017'; -- Beignets de carnaval
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000018'; -- Gbofotos
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000019'; -- Yaourt façon Mily's
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000020'; -- Thiakry
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000021'; -- Brownies M&Ms
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000022'; -- Mousse au chocolat
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000023'; -- Éclair au chocolat
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000024'; -- Chouquettes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1564093497595-593b96d80571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000025'; -- Salade de fruits
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000026'; -- Île flottante
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000027'; -- Flan au caramel
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000028'; -- Profiteroles
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000029'; -- Crêpes
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000030'; -- Churros
+UPDATE dishes SET photo_url = 'https://images.unsplash.com/photo-1519676867240-f03562e64571?w=600&h=400&fit=crop' WHERE id = '33333333-6000-0000-0000-000000000031'; -- Gaufres
+
+-- --------------------------------------------------------------------------
 -- 7.5 Ingrédients
 -- --------------------------------------------------------------------------
 INSERT INTO ingredients (id, name, unit, current_stock, min_stock, cost_per_unit, category)
