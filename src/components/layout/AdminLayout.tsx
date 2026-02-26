@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 import { MobileNav } from "./MobileNav"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { ADMIN_NAV, KITCHEN_NAV, CASHIER_NAV } from "@/lib/constants"
 import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
@@ -33,6 +34,7 @@ function getNavItems(roles: string[]) {
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const { user } = useAuth()
   const location = useLocation()
 
@@ -50,18 +52,28 @@ export function AdminLayout() {
         />
       </div>
 
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-64 p-0 bg-sidebar border-sidebar-border">
+          <Sidebar
+            navItems={navItems}
+            onNavigate={() => setMobileOpen(false)}
+          />
+        </SheetContent>
+      </Sheet>
+
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header
           title={pageTitle}
-          onMenuToggle={() => setCollapsed((c) => !c)}
+          onMenuToggle={() => setMobileOpen(true)}
           showSearch
         />
 
         <main
           className={cn(
             "flex-1 overflow-y-auto p-4 md:p-6",
-            "pb-20 md:pb-6" // Extra bottom padding for mobile nav
+            "pb-20 md:pb-6"
           )}
         >
           <Outlet />

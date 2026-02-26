@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import { MobileNav } from "./MobileNav"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { EMPLOYEE_NAV } from "@/lib/constants"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -16,11 +17,12 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function EmployeeLayout() {
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
   const pageTitle = PAGE_TITLES[location.pathname] || "MILY'S Gourmet"
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex">
         <Sidebar
@@ -30,11 +32,21 @@ export function EmployeeLayout() {
         />
       </div>
 
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-64 p-0 bg-sidebar border-sidebar-border">
+          <Sidebar
+            navItems={EMPLOYEE_NAV}
+            onNavigate={() => setMobileOpen(false)}
+          />
+        </SheetContent>
+      </Sheet>
+
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header
           title={pageTitle}
-          onMenuToggle={() => setCollapsed((c) => !c)}
+          onMenuToggle={() => setMobileOpen(true)}
           notificationCount={2}
         />
 

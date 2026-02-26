@@ -28,9 +28,10 @@ interface SidebarProps {
   navItems: NavItem[]
   collapsed?: boolean
   onToggle?: () => void
+  onNavigate?: () => void
 }
 
-export function Sidebar({ navItems, collapsed = false, onToggle }: SidebarProps) {
+export function Sidebar({ navItems, collapsed = false, onToggle, onNavigate }: SidebarProps) {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
@@ -89,6 +90,7 @@ export function Sidebar({ navItems, collapsed = false, onToggle }: SidebarProps)
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
