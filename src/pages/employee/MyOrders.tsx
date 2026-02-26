@@ -1,120 +1,33 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { Clock, Utensils, Calendar, ChevronDown } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Clock, Utensils, Calendar, ChevronDown, XCircle } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
-import type { Order, Dish, OrderStatus } from "@/lib/types"
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { useOrders } from "@/hooks/use-orders"
 import { CURRENCY } from "@/lib/constants"
 import { OrderStatusBadge } from "@/components/shared/StatusBadge"
 import { PriceDisplay } from "@/components/shared/PriceDisplay"
 
-const MONTHS = [
-  "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
-  "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre",
-]
-
 const STATUS_FILTERS: { value: string; label: string }[] = [
-  { value: "all", label: "Tous les statuts" },
-  { value: "confirmed", label: "Confirmee" },
+  { value: "all", label: "Tous" },
+  { value: "confirmed", label: "Confirmée" },
   { value: "served", label: "Servie" },
-  { value: "cancelled", label: "Annulee" },
+  { value: "cancelled", label: "Annulée" },
   { value: "no_show", label: "Absent" },
 ]
 
-const PAGE_SIZE = 20
-
 export function MyOrders() {
-  const { user } = useAuth()
-  const [orders, setOrders] = useState<(Order & { dish?: Dish })[]>([])
-  const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const now = new Date()
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
-  })
-  const [statusFilter, setStatusFilter] = useState("all")
-
-  const [year, month] = selectedMonth.split("-").map(Number)
-
-  const fetchOrders = useCallback(async (offset = 0, append = false) => {
-    if (!user?.user?.id) return
-
-    if (offset === 0) setLoading(true)
-    else setLoadingMore(true)
-
-    const startDate = `${year}-${String(month).padStart(2, "0")}-01`
-    const endDate = new Date(year, month, 0).toISOString().split("T")[0]
-
-    let query = supabase
-      .from("orders")
-      .select("*, dish:dishes(*)")
-      .eq("user_id", user.user.id)
-      .gte("order_date", startDate)
-      .lte("order_date", endDate)
-      .order("order_date", { ascending: false })
-      .range(offset, offset + PAGE_SIZE - 1)
-
-    if (statusFilter !== "all") {
-      query = query.eq("status", statusFilter)
-    }
-
-    const { data, error } = await query
-
-    if (!error && data) {
-      if (append) {
-        setOrders(prev => [...prev, ...data])
-      } else {
-        setOrders(data)
-      }
-      setHasMore(data.length === PAGE_SIZE)
-    }
-
-    setLoading(false)
-    setLoadingMore(false)
-  }, [user?.user?.id, year, month, statusFilter])
-
-  useEffect(() => {
-    setOrders([])
-    setHasMore(true)
-    fetchOrders(0, false)
-  }, [fetchOrders])
-
-  const loadMore = () => {
-    if (!loadingMore && hasMore) {
-      fetchOrders(orders.length, true)
-    }
-  }
-
-  // Monthly summary
-  const summary = useMemo(() => {
-    const total = orders.length
-    const served = orders.filter(o => o.status === "served").length
-    const cancelled = orders.filter(o => o.status === "cancelled").length
-    const totalSpent = orders
-      .filter(o => o.status === "served")
-      .reduce((sum, o) => sum + o.employee_share, 0)
-    const totalCompany = orders
-      .filter(o => o.status === "served")
-      .reduce((sum, o) => sum + o.company_share, 0)
-
-    return { total, served, cancelled, totalSpent, totalCompany }
-  }, [orders])
-
-  // Month navigation
-  const monthOptions = useMemo(() => {
-    const opts: { value: string; label: string }[] = []
-    const now = new Date()
-    for (let i = 0; i < 6; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
-      opts.push({ value: val, label: `${MONTHS[d.getMonth()]} ${d.getFullYear()}` })
-    }
-    return opts
-  }, [])
+  const {
+    orders, loading, loadingMore, hasMore, loadMore,
+    selectedMonth, setSelectedMonth, statusFilter, setStatusFilter,
+    summary, monthOptions,
+    cancelDialog, setCancelDialog, cancelReason, setCancelReason, handleCancelOrder,
+  } = useOrders()
 
   if (loading) {
     return (
@@ -139,30 +52,44 @@ export function MyOrders() {
         <p className="text-slate-500 text-sm mt-1">Historique de vos commandes MILY'S</p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-          <SelectTrigger className="w-48">
-            <Calendar className="h-4 w-4 mr-2 text-slate-400" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {monthOptions.map(opt => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Month selector */}
+      <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+        <SelectTrigger className="w-52">
+          <Calendar className="h-4 w-4 mr-2 text-slate-400" />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {monthOptions.map(opt => (
+            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_FILTERS.map(f => (
-              <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Badge quick filters */}
+      <div className="flex gap-2 flex-wrap">
+        {STATUS_FILTERS.map(f => (
+          <button
+            key={f.value}
+            type="button"
+            onClick={() => setStatusFilter(f.value)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+              statusFilter === f.value
+                ? "bg-orange-500 text-white shadow-sm"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            {f.label}
+            {f.value === "all" && summary.total > 0 && (
+              <span className="ml-1 opacity-80">{summary.total}</span>
+            )}
+            {f.value === "served" && summary.served > 0 && (
+              <span className="ml-1 opacity-80">{summary.served}</span>
+            )}
+            {f.value === "cancelled" && summary.cancelled > 0 && (
+              <span className="ml-1 opacity-80">{summary.cancelled}</span>
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Monthly summary */}
@@ -201,7 +128,7 @@ export function MyOrders() {
       {orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Utensils className="h-12 w-12 text-slate-300 mb-3" />
-          <p className="text-sm text-slate-500">Aucune commande pour cette periode.</p>
+          <p className="text-sm text-slate-500">Aucune commande pour cette période.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -230,7 +157,19 @@ export function MyOrders() {
                         weekday: "short", day: "numeric", month: "short"
                       })}
                     </p>
-                    <OrderStatusBadge status={order.status} className="mt-1.5" />
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <OrderStatusBadge status={order.status} />
+                      {order.status === "confirmed" && !order.ticket_used && (
+                        <button
+                          type="button"
+                          onClick={() => setCancelDialog(order.id)}
+                          className="text-[10px] text-red-500 hover:text-red-700 font-medium flex items-center gap-0.5 transition-colors"
+                        >
+                          <XCircle className="h-3 w-3" />
+                          Annuler
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="text-right shrink-0 space-y-1">
                     <PriceDisplay amount={order.total_price} size="sm" />
@@ -260,7 +199,7 @@ export function MyOrders() {
           {hasMore && (
             <Button
               variant="outline"
-              className="w-full gap-2"
+              className="w-full gap-2 hover:scale-105 transition-all"
               onClick={loadMore}
               disabled={loadingMore}
             >
@@ -274,6 +213,31 @@ export function MyOrders() {
           )}
         </div>
       )}
+
+      {/* Cancel order dialog */}
+      <Dialog open={!!cancelDialog} onOpenChange={() => { setCancelDialog(null); setCancelReason("") }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Annuler cette commande</DialogTitle>
+            <DialogDescription>
+              Veuillez indiquer la raison de l'annulation. Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Raison de l'annulation (obligatoire)..."
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            className="min-h-[80px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setCancelDialog(null); setCancelReason("") }}>Retour</Button>
+            <Button variant="destructive" disabled={!cancelReason.trim()} onClick={handleCancelOrder}
+              className="hover:scale-105 transition-all">
+              Confirmer l'annulation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

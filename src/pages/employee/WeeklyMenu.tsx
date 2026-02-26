@@ -1,352 +1,49 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect } from "react"
 import {
-  Lock, CheckCircle2, Minus, Plus, AlertTriangle, Utensils, Calendar
+  Lock, CheckCircle2, Minus, Plus, AlertTriangle, Utensils, Calendar,
+  ChevronDown, ChevronUp
 } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/components/ui/use-toast"
-import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
-import type { Menu, MenuItem, WeeklyPlan, CompanyContract, ExtraItem } from "@/lib/types"
-import { DAY_LABELS, DAY_SHORT_LABELS } from "@/lib/types"
-import { CURRENCY, BASE_MEAL_PRICE } from "@/lib/constants"
+import { useWeeklyMenu } from "@/hooks/use-weekly-menu"
+import { DAY_SHORT_LABELS } from "@/lib/types"
+import { CURRENCY } from "@/lib/constants"
 import { DishCard } from "@/components/shared/DishCard"
 import { CountdownTimer } from "@/components/shared/CountdownTimer"
 import { PlanStatusBadge } from "@/components/shared/StatusBadge"
 import { PriceSplit } from "@/components/shared/PriceDisplay"
 
-function isDayLocked(weekStart: string, dayOfWeek: number): boolean {
-  const d = new Date(weekStart + "T00:00:00")
-  d.setDate(d.getDate() + dayOfWeek - 1)
-  d.setDate(d.getDate() - 3)
-  d.setHours(23, 59, 59, 999)
-  return new Date() > d
-}
-
-interface DaySelection {
-  dishId: string | null
-  extras: ExtraItem[]
-}
-
 export function WeeklyMenu() {
-  const { user } = useAuth()
-  const { toast } = useToast()
-  const [menus, setMenus] = useState<Menu[]>([])
-  const [weeklyPlans, setWeeklyPlans] = useState<Map<string, WeeklyPlan>>(new Map())
-  const [contract, setContract] = useState<CompanyContract | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [activeWeekIdx, setActiveWeekIdx] = useState(0)
-  const [activeDayOfWeek, setActiveDayOfWeek] = useState(1)
-  const [selections, setSelections] = useState<Map<string, Map<number, DaySelection>>>(new Map())
-  const [cancelDialog, setCancelDialog] = useState<{ menuId: string; dayOfWeek: number } | null>(null)
-  const [cancelReason, setCancelReason] = useState("")
+  const {
+    menus, activeMenu, loading, saving, activeWeekIdx, setActiveWeekIdx,
+    activeDayOfWeek, setActiveDayOfWeek, workingDays, dayMenuItems,
+    currentSelection, dayLocked, plan, planConfirmed, contract,
+    selectDish, updateExtra, dayTotal, companyShareDay, employeeShareDay,
+    weekProgress, weekSummary, totalEmployeeShare, totalExtras, totalCompanyShare,
+    showConfirmation, setShowConfirmation, confirmationSuccess, setConfirmationSuccess,
+    handleValidate, isDayLocked, extrasOpen, setExtrasOpen, selections, basePriceVal,
+    cancelDayDialog, setCancelDayDialog, cancelDayReason, setCancelDayReason, handleCancelDay,
+  } = useWeeklyMenu()
 
-  const profile = user?.profile
-
+  // Auto-close confirmation dialog after success
   useEffect(() => {
-    if (!user?.user?.id) return
-
-    const fetchData = async () => {
-      setLoading(true)
-      const userId = user.user.id
-      const today = new Date().toISOString().split("T")[0]
-
-      const { data: menuData } = await supabase
-        .from("menus")
-        .select("*, items:menu_items(*, dish:dishes(*))")
-        .eq("is_published", true)
-        .gte("week_end", today)
-        .order("week_start", { ascending: true })
-        .limit(4)
-
-      if (menuData) {
-        setMenus(menuData)
-
-        const menuIds = menuData.map((m: Menu) => m.id)
-        if (menuIds.length > 0) {
-          const { data: planData } = await supabase
-            .from("weekly_plans")
-            .select("*, items:weekly_plan_items(*, dish:dishes(*))")
-            .eq("user_id", userId)
-            .in("menu_id", menuIds)
-
-          if (planData) {
-            const planMap = new Map<string, WeeklyPlan>()
-            const selMap = new Map<string, Map<number, DaySelection>>()
-
-            for (const plan of planData) {
-              planMap.set(plan.menu_id, plan)
-              const dayMap = new Map<number, DaySelection>()
-              for (const item of plan.items || []) {
-                dayMap.set(item.day_of_week, {
-                  dishId: item.is_cancelled ? null : item.dish_id,
-                  extras: item.extras || [],
-                })
-              }
-              selMap.set(plan.menu_id, dayMap)
-            }
-
-            setWeeklyPlans(planMap)
-            setSelections(selMap)
-          }
-        }
-      }
-
-      if (profile?.company_id) {
-        const { data: contractData } = await supabase
-          .from("company_contracts")
-          .select("*")
-          .eq("company_id", profile.company_id)
-          .eq("is_active", true)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle()
-
-        if (contractData) setContract(contractData)
-      }
-
-      setLoading(false)
+    if (confirmationSuccess) {
+      const timer = setTimeout(() => {
+        setShowConfirmation(false)
+        setConfirmationSuccess(false)
+      }, 2500)
+      return () => clearTimeout(timer)
     }
-
-    fetchData()
-  }, [user?.user?.id, profile?.company_id])
-
-  const activeMenu = menus[activeWeekIdx]
-  const workingDays = contract?.working_days || 5
-
-  const dayMenuItems = useMemo(() => {
-    if (!activeMenu?.items) return { starter: null as MenuItem | null, mainDishes: [] as MenuItem[], extras: [] as MenuItem[] }
-    const dayItems = activeMenu.items.filter((i: MenuItem) => i.day_of_week === activeDayOfWeek)
-    return {
-      starter: dayItems.find((i: MenuItem) => i.is_starter) || null,
-      mainDishes: dayItems.filter((i: MenuItem) => !i.is_starter && !i.dish?.is_extra),
-      extras: dayItems.filter((i: MenuItem) => i.dish?.is_extra),
-    }
-  }, [activeMenu, activeDayOfWeek])
-
-  const currentSelection = useMemo(() => {
-    if (!activeMenu) return null
-    return selections.get(activeMenu.id)?.get(activeDayOfWeek) || null
-  }, [activeMenu, activeDayOfWeek, selections])
-
-  const dayLocked = activeMenu ? isDayLocked(activeMenu.week_start, activeDayOfWeek) : true
-  const plan = activeMenu ? weeklyPlans.get(activeMenu.id) : undefined
-  const planConfirmed = plan?.status === "confirmed" || plan?.status === "locked"
-
-  const selectDish = useCallback((dishId: string) => {
-    if (!activeMenu || dayLocked) return
-    setSelections(prev => {
-      const next = new Map(prev)
-      const dayMap = new Map(next.get(activeMenu.id) || new Map())
-      const current = dayMap.get(activeDayOfWeek) || { dishId: null, extras: [] }
-      dayMap.set(activeDayOfWeek, { ...current, dishId })
-      next.set(activeMenu.id, dayMap)
-      return next
-    })
-  }, [activeMenu, activeDayOfWeek, dayLocked])
-
-  const updateExtra = useCallback((dishId: string, unitPrice: number, delta: number) => {
-    if (!activeMenu || dayLocked) return
-    setSelections(prev => {
-      const next = new Map(prev)
-      const dayMap = new Map(next.get(activeMenu.id) || new Map())
-      const current = dayMap.get(activeDayOfWeek) || { dishId: null, extras: [] }
-      const extras = [...current.extras]
-      const idx = extras.findIndex(e => e.dish_id === dishId)
-
-      if (idx >= 0) {
-        const newQty = extras[idx].quantity + delta
-        if (newQty <= 0) extras.splice(idx, 1)
-        else extras[idx] = { ...extras[idx], quantity: newQty }
-      } else if (delta > 0) {
-        extras.push({ dish_id: dishId, quantity: 1, unit_price: unitPrice })
-      }
-
-      dayMap.set(activeDayOfWeek, { ...current, extras })
-      next.set(activeMenu.id, dayMap)
-      return next
-    })
-  }, [activeMenu, activeDayOfWeek, dayLocked])
-
-  const dayTotal = useMemo(() => {
-    if (!currentSelection?.dishId) return 0
-    const basePriceVal = contract?.base_meal_price || BASE_MEAL_PRICE
-    const extrasTotal = currentSelection.extras.reduce((sum, e) => sum + e.unit_price * e.quantity, 0)
-    return basePriceVal + extrasTotal
-  }, [currentSelection, contract])
-
-  const subsidyRate = contract?.subsidy_rate || 90
-  const companyShareDay = currentSelection?.dishId ? Math.round((contract?.base_meal_price || BASE_MEAL_PRICE) * subsidyRate / 100) : 0
-  const employeeShareDay = dayTotal - companyShareDay
-
-  const weekProgress = useMemo(() => {
-    if (!activeMenu) return { selected: 0, total: workingDays }
-    const dayMap = selections.get(activeMenu.id) || new Map()
-    let count = 0
-    for (let d = 1; d <= workingDays; d++) {
-      if (dayMap.get(d)?.dishId) count++
-    }
-    return { selected: count, total: workingDays }
-  }, [activeMenu, selections, workingDays])
-
-  const handleValidate = async () => {
-    if (!activeMenu || !user?.user?.id) return
-    setSaving(true)
-
-    try {
-      const userId = user.user.id
-      const dayMap = selections.get(activeMenu.id)
-
-      let planId: string = weeklyPlans.get(activeMenu.id)?.id || ""
-      if (!planId) {
-        const { data: newPlan, error: planErr } = await supabase
-          .from("weekly_plans")
-          .insert({
-            user_id: userId,
-            menu_id: activeMenu.id,
-            status: "confirmed",
-            confirmed_at: new Date().toISOString(),
-          })
-          .select("id")
-          .single()
-
-        if (planErr) throw planErr
-        planId = newPlan.id
-      } else {
-        await supabase
-          .from("weekly_plans")
-          .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
-          .eq("id", planId)
-      }
-
-      if (dayMap) {
-        await supabase
-          .from("weekly_plan_items")
-          .delete()
-          .eq("weekly_plan_id", planId)
-
-        const items: Array<{
-          weekly_plan_id: string
-          day_of_week: number
-          dish_id: string
-          extras: ExtraItem[]
-          is_locked: boolean
-        }> = []
-
-        for (const [day, sel] of dayMap.entries()) {
-          if (sel.dishId) {
-            items.push({
-              weekly_plan_id: planId,
-              day_of_week: day,
-              dish_id: sel.dishId,
-              extras: sel.extras,
-              is_locked: isDayLocked(activeMenu.week_start, day),
-            })
-          }
-        }
-
-        if (items.length > 0) {
-          const { error: itemErr } = await supabase.from("weekly_plan_items").insert(items)
-          if (itemErr) throw itemErr
-        }
-      }
-
-      if (dayMap) {
-        for (const [day, sel] of dayMap.entries()) {
-          if (!sel.dishId) continue
-          const orderDate = new Date(activeMenu.week_start + "T00:00:00")
-          orderDate.setDate(orderDate.getDate() + day - 1)
-          const basePriceVal = contract?.base_meal_price || BASE_MEAL_PRICE
-          const extrasTotal = sel.extras.reduce((s, e) => s + e.unit_price * e.quantity, 0)
-
-          await supabase
-            .from("orders")
-            .upsert({
-              user_id: userId,
-              dish_id: sel.dishId,
-              site_id: profile?.site_id || null,
-              order_date: orderDate.toISOString().split("T")[0],
-              extras: sel.extras,
-              status: "confirmed",
-              total_price: basePriceVal + extrasTotal,
-            }, { onConflict: "user_id,order_date" })
-        }
-      }
-
-      toast({ title: "Planning valide !", description: `${weekProgress.selected} repas confirmes pour la semaine.` })
-
-      const { data: refreshedPlan } = await supabase
-        .from("weekly_plans")
-        .select("*, items:weekly_plan_items(*, dish:dishes(*))")
-        .eq("id", planId)
-        .single()
-
-      if (refreshedPlan) {
-        setWeeklyPlans(prev => {
-          const next = new Map(prev)
-          next.set(activeMenu.id, refreshedPlan)
-          return next
-        })
-      }
-    } catch (err) {
-      console.error(err)
-      toast({ title: "Erreur", description: "Impossible de valider le planning.", variant: "destructive" })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleCancelDay = async () => {
-    if (!cancelDialog || !cancelReason.trim()) return
-    const { menuId, dayOfWeek } = cancelDialog
-    const planData = weeklyPlans.get(menuId)
-    if (!planData) return
-
-    const item = planData.items?.find(i => i.day_of_week === dayOfWeek)
-    if (!item) return
-
-    try {
-      await supabase
-        .from("weekly_plan_items")
-        .update({ is_cancelled: true, cancel_reason: cancelReason })
-        .eq("id", item.id)
-
-      const menu = menus.find(m => m.id === menuId)
-      if (menu) {
-        const orderDate = new Date(menu.week_start + "T00:00:00")
-        orderDate.setDate(orderDate.getDate() + dayOfWeek - 1)
-        await supabase
-          .from("orders")
-          .update({ status: "cancelled", special_instructions: cancelReason })
-          .eq("user_id", user!.user.id)
-          .eq("order_date", orderDate.toISOString().split("T")[0])
-      }
-
-      setSelections(prev => {
-        const next = new Map(prev)
-        const dayMap = new Map(next.get(menuId) || new Map())
-        dayMap.set(dayOfWeek, { dishId: null, extras: [] })
-        next.set(menuId, dayMap)
-        return next
-      })
-
-      toast({ title: "Repas annule", description: `${DAY_LABELS[dayOfWeek]} annule.` })
-    } catch {
-      toast({ title: "Erreur", description: "Impossible d'annuler.", variant: "destructive" })
-    } finally {
-      setCancelDialog(null)
-      setCancelReason("")
-    }
-  }
+  }, [confirmationSuccess, setShowConfirmation, setConfirmationSuccess])
 
   if (loading) {
     return (
@@ -368,7 +65,7 @@ export function WeeklyMenu() {
         <Calendar className="h-16 w-16 text-slate-300 mb-4" />
         <h2 className="text-lg font-semibold text-slate-900 mb-2">Aucun menu disponible</h2>
         <p className="text-sm text-slate-500 max-w-sm">
-          Les menus des prochaines semaines n'ont pas encore ete publies.
+          Les menus des prochaines semaines n'ont pas encore été publiés.
         </p>
       </div>
     )
@@ -400,11 +97,12 @@ export function WeeklyMenu() {
         </div>
       )}
 
+      {/* Day tabs with check badges */}
       {activeMenu && (
         <div className="flex gap-1.5 overflow-x-auto pb-1">
           {Array.from({ length: workingDays }, (_, i) => i + 1).map((dow) => {
             const isActive = dow === activeDayOfWeek
-            const locked = isDayLocked(activeMenu.week_start, dow)
+            const locked = isDayLocked(dow)
             const dateObj = new Date(activeMenu.week_start + "T00:00:00")
             dateObj.setDate(dateObj.getDate() + dow - 1)
             const dayNum = dateObj.getDate()
@@ -420,18 +118,18 @@ export function WeeklyMenu() {
                   isActive
                     ? "bg-orange-500 text-white shadow-lg scale-105"
                     : locked
-                    ? "bg-slate-100 text-slate-400"
+                    ? "bg-red-50 text-red-400 border border-red-200"
                     : hasSelection
-                    ? "bg-orange-50 text-orange-700 border border-orange-200"
+                    ? "bg-green-50 text-green-700 border border-green-300"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
                 <span className="text-[10px] font-medium uppercase">{DAY_SHORT_LABELS[dow]}</span>
-                <span className={`text-lg font-bold leading-tight ${isActive ? "text-white" : "text-slate-900"}`}>{dayNum}</span>
+                <span className={`text-lg font-bold leading-tight ${isActive ? "text-white" : locked ? "text-red-400" : hasSelection ? "text-green-800" : "text-slate-900"}`}>{dayNum}</span>
                 {locked ? (
-                  <Lock className={`h-3 w-3 mt-0.5 ${isActive ? "text-orange-200" : "text-slate-400"}`} />
+                  <Lock className={`h-3 w-3 mt-0.5 ${isActive ? "text-orange-200" : "text-red-400"}`} />
                 ) : hasSelection ? (
-                  <CheckCircle2 className={`h-3 w-3 mt-0.5 ${isActive ? "text-white" : "text-orange-500"}`} />
+                  <CheckCircle2 className={`h-3 w-3 mt-0.5 ${isActive ? "text-white" : "text-green-500"}`} />
                 ) : (
                   <div className="h-3 mt-0.5" />
                 )}
@@ -444,18 +142,19 @@ export function WeeklyMenu() {
       {activeMenu && (
         <div className="space-y-4">
           {dayLocked && (
-            <div className="flex items-center gap-2 p-3 bg-slate-100 rounded-lg border border-slate-200">
-              <Lock className="h-4 w-4 text-slate-500 shrink-0" />
-              <p className="text-xs text-slate-600">Ce jour est verrouille (J-3 depasse). Modifications impossibles.</p>
+            <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+              <Lock className="h-4 w-4 text-red-500 shrink-0" />
+              <p className="text-xs text-red-600">Ce jour est verrouillé (J-2 dépassé). Modifications impossibles.</p>
             </div>
           )}
 
+          {/* Starter */}
           {dayMenuItems.starter?.dish && (
             <Card className="border-emerald-200 bg-emerald-50/50">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px]">
-                    ENTREE FIXE
+                    ENTRÉE FIXE
                   </Badge>
                   <span className="text-xs text-slate-400">Incluse dans le menu</span>
                 </div>
@@ -466,6 +165,7 @@ export function WeeklyMenu() {
             </Card>
           )}
 
+          {/* Main dishes */}
           {dayMenuItems.mainDishes.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
@@ -489,44 +189,60 @@ export function WeeklyMenu() {
             </div>
           )}
 
+          {/* Collapsible extras */}
           {dayMenuItems.extras.length > 0 && (
             <div>
-              <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                <Plus className="h-4 w-4 text-orange-500" />
-                Extras — 100% a votre charge
-              </h3>
-              <div className="space-y-2">
-                {dayMenuItems.extras.map((item) => {
-                  if (!item.dish) return null
-                  const extraQty = currentSelection?.extras.find(e => e.dish_id === item.dish_id)?.quantity || 0
+              <button
+                type="button"
+                onClick={() => setExtrasOpen(!extrasOpen)}
+                className="w-full flex items-center justify-between text-sm font-semibold text-slate-700 mb-3 hover:text-orange-600 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <Plus className="h-4 w-4 text-orange-500" />
+                  Extras — 100% à votre charge
+                  {currentSelection?.extras && currentSelection.extras.length > 0 && (
+                    <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 text-[10px]">
+                      {currentSelection.extras.reduce((s, e) => s + e.quantity, 0)}
+                    </Badge>
+                  )}
+                </span>
+                {extrasOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+              {extrasOpen && (
+                <div className="space-y-2">
+                  {dayMenuItems.extras.map((item) => {
+                    if (!item.dish) return null
+                    const extraQty = currentSelection?.extras.find(e => e.dish_id === item.dish_id)?.quantity || 0
 
-                  return (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200">
-                      {item.dish.photo_url && (
-                        <img src={item.dish.photo_url} alt={item.dish.name} className="h-10 w-10 rounded-lg object-cover shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate">{item.dish.name}</p>
-                        <p className="text-xs text-orange-600 font-semibold">+{item.dish.price.toLocaleString("fr-CI")} {CURRENCY}</p>
+                    return (
+                      <div key={item.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200">
+                        {item.dish.photo_url && (
+                          <img src={item.dish.photo_url} alt={item.dish.name} className="h-10 w-10 rounded-lg object-cover shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-900 truncate">{item.dish.name}</p>
+                          <p className="text-xs text-orange-600 font-semibold">+{item.dish.price.toLocaleString("fr-CI")} {CURRENCY}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="icon" className="h-7 w-7" disabled={dayLocked || extraQty === 0}
+                            onClick={() => updateExtra(item.dish_id, item.dish!.price, -1)}>
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="w-6 text-center text-sm font-semibold">{extraQty}</span>
+                          <Button variant="outline" size="icon" className="h-7 w-7" disabled={dayLocked}
+                            onClick={() => updateExtra(item.dish_id, item.dish!.price, 1)}>
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" className="h-7 w-7" disabled={dayLocked || extraQty === 0}
-                          onClick={() => updateExtra(item.dish_id, item.dish!.price, -1)}>
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-6 text-center text-sm font-semibold">{extraQty}</span>
-                        <Button variant="outline" size="icon" className="h-7 w-7" disabled={dayLocked}
-                          onClick={() => updateExtra(item.dish_id, item.dish!.price, 1)}>
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 
+          {/* Day price split */}
           {currentSelection?.dishId && (
             <Card className="border-orange-200">
               <CardContent className="pt-4">
@@ -535,9 +251,10 @@ export function WeeklyMenu() {
             </Card>
           )}
 
+          {/* Cancel day button */}
           {planConfirmed && currentSelection?.dishId && !dayLocked && (
-            <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50 gap-2"
-              onClick={() => setCancelDialog({ menuId: activeMenu.id, dayOfWeek: activeDayOfWeek })}>
+            <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50 gap-2 hover:scale-105 transition-all"
+              onClick={() => setCancelDayDialog({ menuId: activeMenu.id, dayOfWeek: activeDayOfWeek })}>
               <AlertTriangle className="h-4 w-4" />
               Annuler ce repas
             </Button>
@@ -558,32 +275,110 @@ export function WeeklyMenu() {
                 style={{ width: `${(weekProgress.selected / weekProgress.total) * 100}%` }} />
             </div>
           </div>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white gap-2 px-6"
-            disabled={saving || weekProgress.selected === 0} onClick={handleValidate}>
-            {saving ? (
-              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-            ) : (
-              <CheckCircle2 className="h-4 w-4" />
-            )}
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white gap-2 px-6 hover:scale-105 transition-all"
+            disabled={saving || weekProgress.selected === 0} onClick={() => setShowConfirmation(true)}>
+            <CheckCircle2 className="h-4 w-4" />
             Valider la semaine
           </Button>
         </div>
       </div>
 
-      {/* Cancel dialog */}
-      <Dialog open={!!cancelDialog} onOpenChange={() => { setCancelDialog(null); setCancelReason("") }}>
+      {/* Confirmation dialog (Screen 3) */}
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          {confirmationSuccess ? (
+            <div className="flex flex-col items-center py-8">
+              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center animate-bounce">
+                <CheckCircle2 className="h-10 w-10 text-green-500" />
+              </div>
+              <p className="mt-4 text-lg font-semibold text-green-700">Planning validé !</p>
+              <p className="text-sm text-slate-500 mt-1">Vos {weekProgress.selected} repas sont confirmés.</p>
+            </div>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Récapitulatif de la semaine</DialogTitle>
+                <DialogDescription>
+                  Vérifiez votre sélection avant de confirmer.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-3 my-4">
+                {weekSummary.map((item) => (
+                  <div key={item.day} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{item.dayLabel}</p>
+                      {item.starterName && (
+                        <p className="text-xs text-emerald-600">{item.starterName}</p>
+                      )}
+                      <p className="text-xs text-slate-600">{item.dishName}</p>
+                      {item.extrasTotal > 0 && (
+                        <p className="text-[10px] text-orange-600">+{item.extrasTotal.toLocaleString("fr-CI")} {CURRENCY} extras</p>
+                      )}
+                    </div>
+                    <p className="text-sm font-semibold text-slate-700">
+                      {basePriceVal.toLocaleString("fr-CI")} F
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">{weekSummary.length} repas × {basePriceVal.toLocaleString("fr-CI")} F</span>
+                  <span className="font-medium">{(weekSummary.length * basePriceVal).toLocaleString("fr-CI")} {CURRENCY}</span>
+                </div>
+                {totalExtras > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-orange-600">Extras</span>
+                    <span className="text-orange-600 font-medium">+{totalExtras.toLocaleString("fr-CI")} {CURRENCY}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-600">Part entreprise</span>
+                  <span className="text-green-600 font-medium">-{totalCompanyShare.toLocaleString("fr-CI")} {CURRENCY}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-base font-bold">
+                  <span className="text-orange-600">Votre part</span>
+                  <span className="text-orange-600">{(totalEmployeeShare + totalExtras).toLocaleString("fr-CI")} {CURRENCY}</span>
+                </div>
+              </div>
+
+              <DialogFooter className="mt-4">
+                <Button variant="outline" onClick={() => setShowConfirmation(false)}>Retour</Button>
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white gap-2 hover:scale-105 transition-all"
+                  disabled={saving} onClick={handleValidate}>
+                  {saving ? (
+                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4" />
+                  )}
+                  Confirmer
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel day dialog */}
+      <Dialog open={!!cancelDayDialog} onOpenChange={() => { setCancelDayDialog(null); setCancelDayReason("") }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Annuler ce repas</DialogTitle>
             <DialogDescription>
-              Veuillez indiquer la raison de l'annulation. Cette action est irreversible.
+              Veuillez indiquer la raison de l'annulation. Cette action est irréversible.
             </DialogDescription>
           </DialogHeader>
-          <Textarea placeholder="Raison de l'annulation (obligatoire)..." value={cancelReason}
-            onChange={(e) => setCancelReason(e.target.value)} className="min-h-[80px]" />
+          <Textarea placeholder="Raison de l'annulation (obligatoire)..." value={cancelDayReason}
+            onChange={(e) => setCancelDayReason(e.target.value)} className="min-h-[80px]" />
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setCancelDialog(null); setCancelReason("") }}>Retour</Button>
-            <Button variant="destructive" disabled={!cancelReason.trim()} onClick={handleCancelDay}>
+            <Button variant="outline" onClick={() => { setCancelDayDialog(null); setCancelDayReason("") }}>Retour</Button>
+            <Button variant="destructive" disabled={!cancelDayReason.trim()} onClick={handleCancelDay}
+              className="hover:scale-105 transition-all">
               Confirmer l'annulation
             </Button>
           </DialogFooter>

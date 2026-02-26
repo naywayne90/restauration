@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { Save, Camera, Lock, User, Building2, Ticket, LogOut, Shield } from "lucide-react"
+import { Save, Camera, Lock, User, Building2, LogOut, Shield, Bell } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,142 +7,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
+import { Switch } from "@/components/ui/switch"
 import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
+import { useProfile } from "@/hooks/use-profile"
 import { ALLERGEN_OPTIONS, PREFERENCE_OPTIONS, CURRENCY } from "@/lib/constants"
 import { TicketBalance } from "@/components/shared/TicketBalance"
-import type { CompanyContract } from "@/lib/types"
-import { useEffect } from "react"
 
 export function Profile() {
-  const { user, signOut } = useAuth()
-  const { toast } = useToast()
-  const profile = user?.profile
-  const [phone, setPhone] = useState(profile?.phone || "")
-  const [allergens, setAllergens] = useState<string[]>(profile?.allergens || [])
-  const [preferences, setPreferences] = useState<string[]>(profile?.preferences || [])
-  const [currentPassword, setCurrentPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [savingProfile, setSavingProfile] = useState(false)
-  const [savingPassword, setSavingPassword] = useState(false)
-  const [contract, setContract] = useState<CompanyContract | null>(null)
-
-  useEffect(() => {
-    if (!profile?.company_id) return
-    const fetchContract = async () => {
-      const { data } = await supabase
-        .from("company_contracts")
-        .select("*")
-        .eq("company_id", profile.company_id!)
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      if (data) setContract(data)
-    }
-    fetchContract()
-  }, [profile?.company_id])
-
-  const initials = profile?.full_name
-    ?.split(" ")
-    .map(n => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "??"
-
-  const handleSaveProfile = async () => {
-    if (!user?.user?.id) return
-    setSavingProfile(true)
-
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          phone,
-          allergens,
-          preferences,
-        })
-        .eq("id", user.user.id)
-
-      if (error) throw error
-
-      toast({ title: "Profil mis a jour", description: "Vos informations ont ete enregistrees." })
-    } catch (err) {
-      console.error(err)
-      toast({ title: "Erreur", description: "Impossible de sauvegarder.", variant: "destructive" })
-    } finally {
-      setSavingProfile(false)
-    }
-  }
-
-  const handleChangePassword = async () => {
-    if (newPassword.length < 8) {
-      toast({ title: "Erreur", description: "Le mot de passe doit faire au moins 8 caracteres.", variant: "destructive" })
-      return
-    }
-    if (newPassword !== confirmPassword) {
-      toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" })
-      return
-    }
-
-    setSavingPassword(true)
-    try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword })
-      if (error) throw error
-
-      toast({ title: "Mot de passe modifie", description: "Votre nouveau mot de passe est actif." })
-      setCurrentPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
-    } catch (err) {
-      console.error(err)
-      toast({ title: "Erreur", description: "Impossible de changer le mot de passe.", variant: "destructive" })
-    } finally {
-      setSavingPassword(false)
-    }
-  }
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !user?.user?.id) return
-
-    const ext = file.name.split(".").pop()
-    const path = `avatars/${user.user.id}.${ext}`
-
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true })
-
-    if (uploadError) {
-      toast({ title: "Erreur", description: "Impossible d'envoyer la photo.", variant: "destructive" })
-      return
-    }
-
-    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path)
-
-    await supabase
-      .from("profiles")
-      .update({ avatar_url: urlData.publicUrl })
-      .eq("id", user.user.id)
-
-    toast({ title: "Photo mise a jour" })
-  }
-
-  const toggleAllergen = (a: string) => {
-    setAllergens(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
-  }
-
-  const togglePreference = (p: string) => {
-    setPreferences(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])
-  }
+  const { user } = useAuth()
+  const {
+    profile, initials, contract, signOut,
+    phone, setPhone, allergens, preferences,
+    notificationsEnabled, setNotificationsEnabled,
+    newPassword, setNewPassword, confirmPassword, setConfirmPassword,
+    savingProfile, savingPassword,
+    handleSaveProfile, handleChangePassword, handleAvatarUpload,
+    toggleAllergen, togglePreference,
+  } = useProfile()
 
   return (
     <div className="space-y-6 p-4 md:p-6 max-w-2xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Mon profil</h1>
-        <p className="text-slate-500 text-sm mt-1">Gerez vos informations personnelles</p>
+        <p className="text-slate-500 text-sm mt-1">Gérez vos informations personnelles</p>
       </div>
 
       {/* Avatar & info */}
@@ -157,7 +43,7 @@ export function Profile() {
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <label className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors cursor-pointer">
+              <label className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors cursor-pointer hover:scale-110">
                 <Camera className="h-3.5 w-3.5" />
                 <input type="file" accept="image/*" className="sr-only" onChange={handleAvatarUpload} />
               </label>
@@ -167,9 +53,9 @@ export function Profile() {
               <p className="text-sm text-slate-500">{profile?.email}</p>
               <div className="flex gap-2 mt-2 flex-wrap">
                 <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">
-                  {profile?.employee_type === "regular" ? "Employe" :
+                  {profile?.employee_type === "regular" ? "Employé" :
                    profile?.employee_type === "intern" ? "Stagiaire" :
-                   profile?.employee_type === "guard" ? "Agent de securite" : "Visiteur"}
+                   profile?.employee_type === "guard" ? "Agent de sécurité" : "Visiteur"}
                 </Badge>
                 {profile?.company && (
                   <Badge variant="outline">{profile.company.name}</Badge>
@@ -211,7 +97,7 @@ export function Profile() {
                 </p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">Jours ouvres</p>
+                <p className="text-xs text-slate-500">Jours ouvrés</p>
                 <p className="text-sm font-semibold text-slate-900">{contract.working_days} jours/sem</p>
               </div>
             </div>
@@ -236,7 +122,7 @@ export function Profile() {
             <User className="h-4 w-4" />
             Informations personnelles
           </CardTitle>
-          <CardDescription>Mettez a jour vos informations de contact</CardDescription>
+          <CardDescription>Mettez à jour vos informations de contact</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -249,7 +135,7 @@ export function Profile() {
             <Input value={profile?.email || ""} type="email" disabled className="bg-slate-50" />
           </div>
           <div className="space-y-2">
-            <Label>Telephone</Label>
+            <Label>Téléphone</Label>
             <Input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -259,10 +145,33 @@ export function Profile() {
           </div>
           {profile?.department && (
             <div className="space-y-2">
-              <Label>Departement</Label>
+              <Label>Département</Label>
               <Input value={profile.department} disabled className="bg-slate-50" />
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Notification preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Bell className="h-4 w-4" />
+            Notifications
+          </CardTitle>
+          <CardDescription>Gérez vos préférences de notification</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-900">Notifications push</p>
+              <p className="text-xs text-slate-500">Recevez des alertes pour les menus, commandes et rappels</p>
+            </div>
+            <Switch
+              checked={notificationsEnabled}
+              onCheckedChange={setNotificationsEnabled}
+            />
+          </div>
         </CardContent>
       </Card>
 
@@ -271,13 +180,13 @@ export function Profile() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Shield className="h-4 w-4" />
-            Allergenes et preferences
+            Allergènes et préférences
           </CardTitle>
           <CardDescription>Signalez vos restrictions alimentaires</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <p className="text-sm font-medium text-slate-700 mb-3">Allergenes</p>
+            <p className="text-sm font-medium text-slate-700 mb-3">Allergènes</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {ALLERGEN_OPTIONS.map(a => (
                 <label key={a} className="flex items-center gap-2 cursor-pointer">
@@ -294,7 +203,7 @@ export function Profile() {
           <Separator />
 
           <div>
-            <p className="text-sm font-medium text-slate-700 mb-3">Preferences alimentaires</p>
+            <p className="text-sm font-medium text-slate-700 mb-3">Préférences alimentaires</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {PREFERENCE_OPTIONS.map(p => (
                 <label key={p} className="flex items-center gap-2 cursor-pointer">
@@ -309,7 +218,7 @@ export function Profile() {
           </div>
 
           <Button
-            className="bg-orange-500 hover:bg-orange-600 text-white gap-2"
+            className="bg-orange-500 hover:bg-orange-600 text-white gap-2 hover:scale-105 transition-all"
             onClick={handleSaveProfile}
             disabled={savingProfile}
           >
@@ -330,7 +239,7 @@ export function Profile() {
             <Lock className="h-4 w-4" />
             Changer le mot de passe
           </CardTitle>
-          <CardDescription>Choisissez un mot de passe securise d'au moins 8 caracteres</CardDescription>
+          <CardDescription>Choisissez un mot de passe sécurisé d'au moins 8 caractères</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -353,7 +262,7 @@ export function Profile() {
           </div>
           <Button
             variant="outline"
-            className="gap-2"
+            className="gap-2 hover:scale-105 transition-all"
             onClick={handleChangePassword}
             disabled={savingPassword || !newPassword}
           >
@@ -362,7 +271,7 @@ export function Profile() {
             ) : (
               <Lock className="h-4 w-4" />
             )}
-            Mettre a jour le mot de passe
+            Mettre à jour le mot de passe
           </Button>
         </CardContent>
       </Card>
@@ -372,11 +281,11 @@ export function Profile() {
         <CardContent className="pt-4 pb-4">
           <Button
             variant="outline"
-            className="w-full text-red-600 border-red-200 hover:bg-red-50 gap-2"
+            className="w-full text-red-600 border-red-200 hover:bg-red-50 gap-2 hover:scale-105 transition-all"
             onClick={signOut}
           >
             <LogOut className="h-4 w-4" />
-            Se deconnecter
+            Se déconnecter
           </Button>
         </CardContent>
       </Card>

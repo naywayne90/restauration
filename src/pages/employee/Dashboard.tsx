@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import {
   Utensils, QrCode, ArrowRight, Bell, Clock,
-  ShoppingBag
+  ShoppingBag, CalendarDays, CheckCircle2
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
-import type { Order, Notification, WeeklyPlan, Dish, CompanyContract } from "@/lib/types"
+import { useEmployeeDashboard } from "@/hooks/use-employee-dashboard"
 import { CURRENCY } from "@/lib/constants"
 import { DAY_LABELS } from "@/lib/types"
 import { TicketBalance } from "@/components/shared/TicketBalance"
@@ -19,89 +19,24 @@ import { PriceDisplay } from "@/components/shared/PriceDisplay"
 
 export function EmployeeDashboard() {
   const { user } = useAuth()
-  const [todayOrder, setTodayOrder] = useState<(Order & { dish?: Dish }) | null>(null)
-  const [recentOrders, setRecentOrders] = useState<(Order & { dish?: Dish })[]>([])
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [contract, setContract] = useState<CompanyContract | null>(null)
-  const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan | null>(null)
-  const [loading, setLoading] = useState(true)
+  const {
+    todayOrder, recentOrders, notifications, unreadCount,
+    contract, weeklyPlan, loading, monthlySpent,
+  } = useEmployeeDashboard()
 
   const profile = user?.profile
   const today = new Date()
-  const todayStr = today.toISOString().split("T")[0]
-  const dayOfWeek = today.getDay() || 7 // 1=Mon...7=Sun
+  const dayOfWeek = today.getDay() || 7
 
   const greeting = useMemo(() => {
     const hour = today.getHours()
     if (hour < 12) return "Bonjour"
-    if (hour < 18) return "Bon apres-midi"
+    if (hour < 18) return "Bon après-midi"
     return "Bonsoir"
   }, [])
 
-  const firstName = profile?.full_name?.split(" ").pop() || "Employe"
-
-  useEffect(() => {
-    if (!user?.user?.id) return
-
-    const fetchData = async () => {
-      setLoading(true)
-      const userId = user.user.id
-
-      const [orderRes, recentRes, notifRes, contractRes, planRes] = await Promise.all([
-        // Today's order
-        supabase
-          .from("orders")
-          .select("*, dish:dishes(*)")
-          .eq("user_id", userId)
-          .eq("order_date", todayStr)
-          .maybeSingle(),
-        // Recent orders
-        supabase
-          .from("orders")
-          .select("*, dish:dishes(*)")
-          .eq("user_id", userId)
-          .order("order_date", { ascending: false })
-          .limit(5),
-        // Notifications
-        supabase
-          .from("notifications")
-          .select("*")
-          .eq("user_id", userId)
-          .eq("is_read", false)
-          .order("created_at", { ascending: false })
-          .limit(5),
-        // Contract
-        profile?.company_id
-          ? supabase
-              .from("company_contracts")
-              .select("*")
-              .eq("company_id", profile.company_id)
-              .eq("is_active", true)
-              .order("created_at", { ascending: false })
-              .limit(1)
-              .maybeSingle()
-          : Promise.resolve({ data: null }),
-        // Weekly plan
-        supabase
-          .from("weekly_plans")
-          .select("*, items:weekly_plan_items(*, dish:dishes(*))")
-          .eq("user_id", userId)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ])
-
-      if (orderRes.data) setTodayOrder(orderRes.data)
-      if (recentRes.data) setRecentOrders(recentRes.data)
-      if (notifRes.data) setNotifications(notifRes.data)
-      if (contractRes.data) setContract(contractRes.data)
-      if (planRes.data) setWeeklyPlan(planRes.data)
-
-      setLoading(false)
-    }
-
-    fetchData()
-  }, [user?.user?.id, profile?.company_id, todayStr])
+  const firstName = profile?.full_name?.split(" ").pop() || "Employé"
+  const initials = profile?.full_name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "??"
 
   const weekDays = useMemo(() => {
     const startOfWeek = new Date(today)
@@ -111,25 +46,39 @@ export function EmployeeDashboard() {
     return Array.from({ length: 5 }, (_, i) => {
       const d = new Date(startOfWeek)
       d.setDate(startOfWeek.getDate() + i)
+      const dow = i + 1
+      const isToday = dow === dayOfWeek
+      const planItem = weeklyPlan?.items?.find(item => item.day_of_week === dow)
+      const hasSelection = !!planItem && !planItem.is_cancelled
+      const deadlineDate = new Date(d)
+      deadlineDate.setDate(deadlineDate.getDate() - 2)
+      deadlineDate.setHours(23, 59, 59, 999)
+      const isLocked = !isToday && new Date() > deadlineDate
+
       return {
-        dayOfWeek: i + 1,
-        date: d.toISOString().split("T")[0],
+        dayOfWeek: dow,
         dayNum: d.getDate(),
-        isToday: i + 1 === dayOfWeek,
-        label: DAY_LABELS[i + 1],
+        isToday,
+        label: DAY_LABELS[dow],
+        hasSelection,
+        isLocked,
       }
     })
-  }, [dayOfWeek])
+  }, [dayOfWeek, weeklyPlan])
+
+  const orderState = todayOrder
+    ? todayOrder.status === "served" || todayOrder.ticket_used
+      ? "scanned"
+      : "confirmed"
+    : "none"
 
   if (loading) {
     return (
       <div className="space-y-6 p-4 md:p-6">
-        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-16 w-full rounded-xl" />
         <Skeleton className="h-40 w-full rounded-xl" />
         <div className="grid grid-cols-5 gap-2">
-          {Array.from({ length: 5 }, (_, i) => (
-            <Skeleton key={i} className="h-16 rounded-xl" />
-          ))}
+          {Array.from({ length: 5 }, (_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
         </div>
         <Skeleton className="h-48 w-full rounded-xl" />
       </div>
@@ -138,53 +87,69 @@ export function EmployeeDashboard() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      {/* Greeting + Balance */}
+      {/* Greeting + Avatar + Notification bell */}
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            {greeting}, {firstName}
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            {today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-          </p>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-12 w-12">
+            {profile?.avatar_url && <AvatarImage src={profile.avatar_url} />}
+            <AvatarFallback className="bg-orange-100 text-orange-600 font-bold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900">
+              {greeting}, {firstName}
+            </h1>
+            <p className="text-slate-500 text-sm">
+              {today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {contract?.payment_mode === "tickets" && profile && (
-            <TicketBalance
-              balance={profile.ticket_balance}
-              total={contract.tickets_per_month || 24}
-              compact
-            />
-          )}
-          {profile?.company && (
-            <Badge variant="outline" className="hidden md:flex">
-              {profile.company.name}
-            </Badge>
-          )}
+          <Badge className="bg-green-100 text-green-700 hover:bg-green-100 hidden sm:flex">
+            {monthlySpent.toLocaleString("fr-CI")} F ce mois
+          </Badge>
+          <button type="button" className="relative">
+            <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
+              <Bell className="h-5 w-5 text-slate-600" />
+            </div>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
       {/* Today's order card */}
-      <Card className={todayOrder
-        ? "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200"
-        : "bg-gradient-to-r from-slate-50 to-slate-100 border-slate-200"
+      <Card className={
+        orderState === "confirmed"
+          ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+          : orderState === "scanned"
+          ? "bg-gradient-to-r from-slate-50 to-slate-100 border-slate-300"
+          : "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200"
       }>
         <CardContent className="pt-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className={`p-2 rounded-lg ${todayOrder ? "bg-orange-500" : "bg-slate-400"}`}>
+            <div className={`p-2 rounded-lg ${
+              orderState === "confirmed" ? "bg-green-500"
+                : orderState === "scanned" ? "bg-slate-400"
+                : "bg-orange-500"
+            }`}>
               <Utensils className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1">
               <h2 className="font-semibold text-slate-900">
-                {todayOrder ? "Votre repas du jour" : "Pas de commande aujourd'hui"}
+                {orderState === "confirmed" ? "Repas confirmé"
+                  : orderState === "scanned" ? "Repas déjà servi"
+                  : "Pas de commande aujourd'hui"}
               </h2>
               {todayOrder?.dish && (
                 <p className="text-sm text-slate-600">{todayOrder.dish.name}</p>
               )}
             </div>
-            {todayOrder && (
-              <OrderStatusBadge status={todayOrder.status} />
-            )}
+            {todayOrder && <OrderStatusBadge status={todayOrder.status} />}
           </div>
 
           {todayOrder ? (
@@ -222,16 +187,15 @@ export function EmployeeDashboard() {
           )}
 
           <div className="flex gap-2 mt-4">
-            {todayOrder?.status === "confirmed" && (
-              <Button asChild className="flex-1 bg-orange-500 hover:bg-orange-600 text-white gap-2">
+            {orderState === "confirmed" && (
+              <Button asChild className="flex-1 bg-green-600 hover:bg-green-700 text-white gap-2 hover:scale-105 transition-all">
                 <Link to="/app/employee/qrcode">
-                  <QrCode className="h-4 w-4" />
-                  Voir mon QR code
+                  <QrCode className="h-4 w-4" /> Voir mon QR code
                 </Link>
               </Button>
             )}
             <Button asChild variant={todayOrder ? "outline" : "default"}
-              className={!todayOrder ? "flex-1 bg-orange-500 hover:bg-orange-600 text-white gap-2" : "gap-2"}>
+              className={!todayOrder ? "flex-1 bg-orange-500 hover:bg-orange-600 text-white gap-2 hover:scale-105 transition-all" : "gap-2 hover:scale-105 transition-all"}>
               <Link to="/app/employee/menu">
                 <ShoppingBag className="h-4 w-4" />
                 {todayOrder ? "Menu" : "Planifier mes repas"}
@@ -241,44 +205,41 @@ export function EmployeeDashboard() {
         </CardContent>
       </Card>
 
-      {/* Week calendar strip */}
+      {/* Week calendar strip — green=ordered, grey=not chosen, red=locked, blue=today */}
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {weekDays.map((day) => {
-          const planItem = weeklyPlan?.items?.find(
-            (item) => item.day_of_week === day.dayOfWeek
-          )
-          const hasSelection = !!planItem && !planItem.is_cancelled
-          return (
-            <Link
-              key={day.dayOfWeek}
-              to="/app/employee/menu"
-              className={`flex flex-col items-center min-w-[56px] px-2 py-2 rounded-xl transition-all ${
-                day.isToday
-                  ? "bg-orange-500 text-white shadow-lg"
-                  : hasSelection
-                  ? "bg-orange-50 border border-orange-200"
-                  : "bg-slate-100 hover:bg-slate-200"
-              }`}
-            >
-              <span className="text-[10px] font-medium uppercase">
-                {day.label.slice(0, 3)}
-              </span>
-              <span className={`text-lg font-bold leading-tight ${
-                day.isToday ? "text-white" : "text-slate-900"
-              }`}>
-                {day.dayNum}
-              </span>
-              {hasSelection && (
-                <div className={`h-1.5 w-1.5 rounded-full mt-0.5 ${
-                  day.isToday ? "bg-white" : "bg-orange-500"
-                }`} />
-              )}
-            </Link>
-          )
-        })}
+        {weekDays.map((day) => (
+          <Link
+            key={day.dayOfWeek}
+            to="/app/employee/menu"
+            className={`flex flex-col items-center min-w-[56px] px-2 py-2 rounded-xl transition-all duration-200 ${
+              day.isToday
+                ? "bg-blue-500 text-white shadow-lg"
+                : day.hasSelection
+                ? "bg-green-50 border border-green-300"
+                : day.isLocked
+                ? "bg-red-50 border border-red-200"
+                : "bg-slate-100 hover:bg-slate-200"
+            }`}
+          >
+            <span className="text-[10px] font-medium uppercase">
+              {day.label.slice(0, 3)}
+            </span>
+            <span className={`text-lg font-bold leading-tight ${
+              day.isToday ? "text-white"
+                : day.hasSelection ? "text-green-800"
+                : day.isLocked ? "text-red-400"
+                : "text-slate-900"
+            }`}>
+              {day.dayNum}
+            </span>
+            {day.hasSelection && (
+              <CheckCircle2 className={`h-3 w-3 mt-0.5 ${day.isToday ? "text-white" : "text-green-500"}`} />
+            )}
+          </Link>
+        ))}
       </div>
 
-      {/* Ticket balance (expanded) for ticket companies */}
+      {/* Ticket balance for ticket companies */}
       {contract?.payment_mode === "tickets" && profile && (
         <Card>
           <CardContent className="pt-6">
@@ -290,12 +251,12 @@ export function EmployeeDashboard() {
         </Card>
       )}
 
-      {/* Recent orders */}
+      {/* Recent orders (3) */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Commandes recentes</CardTitle>
-            <Button asChild variant="ghost" size="sm" className="text-orange-500 gap-1">
+            <CardTitle className="text-base">Commandes récentes</CardTitle>
+            <Button asChild variant="ghost" size="sm" className="text-orange-500 gap-1 hover:scale-105 transition-all">
               <Link to="/app/employee/orders">
                 Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
@@ -307,7 +268,7 @@ export function EmployeeDashboard() {
             <p className="px-4 pb-4 text-sm text-slate-400">Aucune commande pour le moment.</p>
           ) : (
             <div className="divide-y divide-slate-100">
-              {recentOrders.map((order) => (
+              {recentOrders.slice(0, 3).map((order) => (
                 <div key={order.id} className="flex items-center gap-3 px-4 py-3">
                   {order.dish?.photo_url ? (
                     <img
@@ -342,6 +303,25 @@ export function EmployeeDashboard() {
         </CardContent>
       </Card>
 
+      {/* Menu preview section */}
+      <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-3 mb-3">
+            <CalendarDays className="h-5 w-5 text-orange-500" />
+            <h3 className="font-semibold text-slate-900">Menu de la semaine</h3>
+          </div>
+          <p className="text-sm text-slate-600 mb-4">
+            Planifiez vos repas pour la semaine et profitez de la subvention entreprise.
+          </p>
+          <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white gap-2 hover:scale-105 transition-all">
+            <Link to="/app/employee/menu">
+              <CalendarDays className="h-4 w-4" />
+              Planifier ma semaine
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Notifications */}
       {notifications.length > 0 && (
         <Card>
@@ -349,7 +329,7 @@ export function EmployeeDashboard() {
             <CardTitle className="text-base flex items-center gap-2">
               <Bell className="h-4 w-4 text-orange-500" />
               Notifications
-              <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 text-xs">
+              <Badge className="bg-red-500 text-white hover:bg-red-500 text-xs">
                 {notifications.length}
               </Badge>
             </CardTitle>

@@ -1,4 +1,4 @@
-import { QRCodeSVG } from "qrcode.react"
+import QRCode from "react-qr-code"
 import { cn } from "@/lib/utils"
 import { Maximize2, Minimize2 } from "lucide-react"
 import { useState } from "react"
@@ -35,11 +35,10 @@ export function QRCodeDisplay({
         className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center"
         onClick={() => setFullscreen(false)}
       >
-        <QRCodeSVG
+        <QRCode
           value={jsonValue}
           size={Math.min(window.innerWidth - 40, 400)}
           level="H"
-          includeMargin
         />
         <p className="mt-4 text-sm text-slate-500">
           Valide {validStart} - {validEnd}
@@ -60,11 +59,10 @@ export function QRCodeDisplay({
   return (
     <div className={cn("flex flex-col items-center", className)}>
       <div className="relative bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-sm">
-        <QRCodeSVG
+        <QRCode
           value={jsonValue}
           size={size}
           level="H"
-          includeMargin
         />
         <button
           type="button"
