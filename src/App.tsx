@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import { useAuth } from "@/hooks/use-auth"
+import type { UserRole } from "@/lib/types"
 import { PageLoader } from "@/components/shared/LoadingSpinner"
+import { ForbiddenPage } from "@/components/shared/ForbiddenPage"
 import { AdminLayout } from "@/components/layout/AdminLayout"
 import { EmployeeLayout } from "@/components/layout/EmployeeLayout"
 import { PublicLayout } from "@/components/layout/PublicLayout"
@@ -18,6 +20,8 @@ import { Menus } from "@/pages/admin/Menus"
 import { Orders } from "@/pages/admin/Orders"
 import { Invoices } from "@/pages/admin/Invoices"
 import { Deliveries } from "@/pages/admin/Deliveries"
+import { Suppliers } from "@/pages/admin/Suppliers"
+import { Stock } from "@/pages/admin/Stock"
 import { Settings } from "@/pages/admin/Settings"
 
 // Kitchen pages
@@ -43,13 +47,39 @@ import { Contact } from "@/pages/public/Contact"
 
 import { ROLE_HOME_ROUTES } from "@/lib/constants"
 
-// ─── Route guard ──────────────────────────────────────────────────────────────
+// ─── Role groups ────────────────────────────────────────────────────────────
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
+const ADMIN_ALLOWED: UserRole[] = [
+  "superadmin", "milys_admin", "milys_logistics", "company_admin",
+]
+const KITCHEN_ALLOWED: UserRole[] = [
+  "superadmin", "milys_admin", "milys_kitchen",
+]
+const CASHIER_ALLOWED: UserRole[] = [
+  "superadmin", "milys_admin", "milys_cashier", "company_cashier", "third_party_cashier",
+]
+const EMPLOYEE_ALLOWED: UserRole[] = [
+  "superadmin", "milys_admin", "employee",
+]
+
+// ─── Route guards ───────────────────────────────────────────────────────────
+
+function ProtectedRoute({
+  children,
+  allowedRoles,
+}: {
+  children: React.ReactNode
+  allowedRoles?: UserRole[]
+}) {
+  const { user, isLoading, hasAnyRole } = useAuth()
 
   if (isLoading) return <PageLoader />
   if (!user) return <Navigate to="/login" replace />
+
+  if (allowedRoles && !hasAnyRole(allowedRoles)) {
+    return <ForbiddenPage />
+  }
+
   return <>{children}</>
 }
 
@@ -59,23 +89,23 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   if (isLoading) return <PageLoader />
   if (user) {
     const role = user.roles[0]
-    const redirect = ROLE_HOME_ROUTES[role] || "/employee/dashboard"
+    const redirect = ROLE_HOME_ROUTES[role] || "/app/employee/dashboard"
     return <Navigate to={redirect} replace />
   }
   return <>{children}</>
 }
 
-// ─── App routes ───────────────────────────────────────────────────────────────
+// ─── App routes ─────────────────────────────────────────────────────────────
 
 export default function App() {
   return (
     <Routes>
-      {/* Public marketing pages */}
+      {/* Public marketing pages — /gourmet/* */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/comment-ca-marche" element={<HowItWorks />} />
-        <Route path="/entreprises" element={<ForCompanies />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/gourmet" element={<LandingPage />} />
+        <Route path="/gourmet/entreprises" element={<ForCompanies />} />
+        <Route path="/gourmet/comment-ca-marche" element={<HowItWorks />} />
+        <Route path="/gourmet/contact" element={<Contact />} />
       </Route>
 
       {/* Auth pages */}
@@ -89,51 +119,69 @@ export default function App() {
       />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-      {/* Admin / Kitchen / Cashier — AdminLayout */}
+      {/* Admin routes — /app/admin/* */}
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={ADMIN_ALLOWED}>
             <AdminLayout />
           </ProtectedRoute>
         }
       >
-        {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/companies" element={<Companies />} />
-        <Route path="/admin/employees" element={<Employees />} />
-        <Route path="/admin/dishes" element={<Dishes />} />
-        <Route path="/admin/menus" element={<Menus />} />
-        <Route path="/admin/orders" element={<Orders />} />
-        <Route path="/admin/invoices" element={<Invoices />} />
-        <Route path="/admin/deliveries" element={<Deliveries />} />
-        <Route path="/admin/settings" element={<Settings />} />
-
-        {/* Kitchen routes */}
-        <Route path="/kitchen/production" element={<DailyProduction />} />
-        <Route path="/kitchen/stock" element={<StockAlerts />} />
-
-        {/* Cashier routes */}
-        <Route path="/cashier/scan" element={<ScanQR />} />
-        <Route path="/cashier/report" element={<DailyReport />} />
+        <Route path="/app/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/app/admin/companies" element={<Companies />} />
+        <Route path="/app/admin/employees" element={<Employees />} />
+        <Route path="/app/admin/dishes" element={<Dishes />} />
+        <Route path="/app/admin/menus" element={<Menus />} />
+        <Route path="/app/admin/orders" element={<Orders />} />
+        <Route path="/app/admin/invoices" element={<Invoices />} />
+        <Route path="/app/admin/deliveries" element={<Deliveries />} />
+        <Route path="/app/admin/suppliers" element={<Suppliers />} />
+        <Route path="/app/admin/stock" element={<Stock />} />
+        <Route path="/app/admin/settings" element={<Settings />} />
       </Route>
 
-      {/* Employee — EmployeeLayout */}
+      {/* Kitchen routes — /app/kitchen/* */}
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={KITCHEN_ALLOWED}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/app/kitchen/production" element={<DailyProduction />} />
+        <Route path="/app/kitchen/stock" element={<StockAlerts />} />
+      </Route>
+
+      {/* Cashier routes — /app/cashier/* */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={CASHIER_ALLOWED}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/app/cashier/scan" element={<ScanQR />} />
+        <Route path="/app/cashier/report" element={<DailyReport />} />
+      </Route>
+
+      {/* Employee routes — /app/employee/* */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={EMPLOYEE_ALLOWED}>
             <EmployeeLayout />
           </ProtectedRoute>
         }
       >
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-        <Route path="/employee/menu" element={<WeeklyMenu />} />
-        <Route path="/employee/orders" element={<MyOrders />} />
-        <Route path="/employee/qrcode" element={<MyQRCode />} />
-        <Route path="/employee/profile" element={<Profile />} />
+        <Route path="/app/employee/dashboard" element={<EmployeeDashboard />} />
+        <Route path="/app/employee/menu" element={<WeeklyMenu />} />
+        <Route path="/app/employee/orders" element={<MyOrders />} />
+        <Route path="/app/employee/qrcode" element={<MyQRCode />} />
+        <Route path="/app/employee/profile" element={<Profile />} />
       </Route>
 
-      {/* Default redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Redirects */}
+      <Route path="/" element={<Navigate to="/gourmet" replace />} />
+      <Route path="*" element={<Navigate to="/gourmet" replace />} />
     </Routes>
   )
 }

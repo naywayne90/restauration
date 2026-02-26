@@ -785,6 +785,39 @@ CREATE OR REPLACE TRIGGER trg_orders_qr_generate
 AFTER INSERT ON orders
 FOR EACH ROW EXECUTE FUNCTION generate_qr_on_order();
 
+-- --------------------------------------------------------------------------
+-- 5.5 Trigger stock_movement : met à jour ingredients.current_stock
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION update_ingredient_stock()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_delta DECIMAL(10,3);
+  v_new_balance DECIMAL(10,3);
+BEGIN
+  -- Determine the signed delta based on movement type
+  IF NEW.movement_type IN ('entry', 'return') THEN
+    v_delta := ABS(NEW.quantity);
+  ELSIF NEW.movement_type IN ('exit', 'waste') THEN
+    v_delta := -ABS(NEW.quantity);
+  ELSE -- 'adjustment' uses the raw value (can be positive or negative)
+    v_delta := NEW.quantity;
+  END IF;
+
+  UPDATE ingredients
+  SET current_stock = current_stock + v_delta
+  WHERE id = NEW.ingredient_id
+  RETURNING current_stock INTO v_new_balance;
+
+  -- Store the resulting balance in the movement row
+  NEW.balance_after := v_new_balance;
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER trg_stock_movement_update
+BEFORE INSERT ON stock_movements
+FOR EACH ROW EXECUTE FUNCTION update_ingredient_stock();
+
 -- ============================================================================
 -- 6. ROW LEVEL SECURITY (RLS)
 -- ============================================================================
@@ -1140,6 +1173,103 @@ DROP POLICY IF EXISTS "app_config_manage" ON app_config;
 CREATE POLICY "app_config_manage" ON app_config
   USING (has_role('superadmin')) WITH CHECK (has_role('superadmin'));
 
+-- dish_allergens : gestion admin + cuisine
+DROP POLICY IF EXISTS "dish_allergens_manage" ON dish_allergens;
+CREATE POLICY "dish_allergens_manage" ON dish_allergens
+  USING (is_admin() OR has_role('milys_kitchen'))
+  WITH CHECK (is_admin() OR has_role('milys_kitchen'));
+
+-- dish_ratings : lecture staff, insert/update propre à l'utilisateur
+DROP POLICY IF EXISTS "dish_ratings_select" ON dish_ratings;
+CREATE POLICY "dish_ratings_select" ON dish_ratings FOR SELECT
+  USING (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "dish_ratings_manage" ON dish_ratings;
+CREATE POLICY "dish_ratings_manage" ON dish_ratings
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+
+-- dish_ingredients : lecture staff cuisine/admin, gestion admin + cuisine
+DROP POLICY IF EXISTS "dish_ingredients_select" ON dish_ingredients;
+CREATE POLICY "dish_ingredients_select" ON dish_ingredients FOR SELECT
+  USING (is_milys_staff());
+
+DROP POLICY IF EXISTS "dish_ingredients_manage" ON dish_ingredients;
+CREATE POLICY "dish_ingredients_manage" ON dish_ingredients
+  USING (is_admin() OR has_role('milys_kitchen'))
+  WITH CHECK (is_admin() OR has_role('milys_kitchen'));
+
+-- supplier_ingredients : lecture staff, gestion admin
+DROP POLICY IF EXISTS "supplier_ingredients_select" ON supplier_ingredients;
+CREATE POLICY "supplier_ingredients_select" ON supplier_ingredients FOR SELECT
+  USING (is_milys_staff());
+
+DROP POLICY IF EXISTS "supplier_ingredients_manage" ON supplier_ingredients;
+CREATE POLICY "supplier_ingredients_manage" ON supplier_ingredients
+  USING (is_admin()) WITH CHECK (is_admin());
+
+-- purchase_order_items : lecture staff, gestion admin + cuisine
+DROP POLICY IF EXISTS "po_items_select" ON purchase_order_items;
+CREATE POLICY "po_items_select" ON purchase_order_items FOR SELECT
+  USING (is_milys_staff());
+
+DROP POLICY IF EXISTS "po_items_manage" ON purchase_order_items;
+CREATE POLICY "po_items_manage" ON purchase_order_items
+  USING (is_admin() OR has_role('milys_kitchen'))
+  WITH CHECK (is_admin() OR has_role('milys_kitchen'));
+
+-- physical_tickets : lecture staff + company_admin, gestion staff
+DROP POLICY IF EXISTS "physical_tickets_select" ON physical_tickets;
+CREATE POLICY "physical_tickets_select" ON physical_tickets FOR SELECT
+  USING (is_milys_staff() OR (has_role('company_admin') AND company_id = get_my_company_id()));
+
+DROP POLICY IF EXISTS "physical_tickets_manage" ON physical_tickets;
+CREATE POLICY "physical_tickets_manage" ON physical_tickets
+  USING (is_milys_staff()) WITH CHECK (is_milys_staff());
+
+-- drivers : lecture staff, gestion admin + logistique
+DROP POLICY IF EXISTS "drivers_select" ON drivers;
+CREATE POLICY "drivers_select" ON drivers FOR SELECT
+  USING (is_milys_staff());
+
+DROP POLICY IF EXISTS "drivers_manage" ON drivers;
+CREATE POLICY "drivers_manage" ON drivers
+  USING (is_admin() OR has_role('milys_logistics'))
+  WITH CHECK (is_admin() OR has_role('milys_logistics'));
+
+-- delivery_items : lecture staff + company_admin, gestion staff
+DROP POLICY IF EXISTS "delivery_items_select" ON delivery_items;
+CREATE POLICY "delivery_items_select" ON delivery_items FOR SELECT
+  USING (is_milys_staff() OR has_role('company_admin'));
+
+DROP POLICY IF EXISTS "delivery_items_manage" ON delivery_items;
+CREATE POLICY "delivery_items_manage" ON delivery_items
+  USING (is_milys_staff()) WITH CHECK (is_milys_staff());
+
+-- invoice_items : lecture staff + company_admin pour sa propre entreprise
+DROP POLICY IF EXISTS "invoice_items_select" ON invoice_items;
+CREATE POLICY "invoice_items_select" ON invoice_items FOR SELECT
+  USING (is_milys_staff() OR EXISTS (
+    SELECT 1 FROM invoices i
+    WHERE i.id = invoice_items.invoice_id AND i.company_id = get_my_company_id()
+  ));
+
+DROP POLICY IF EXISTS "invoice_items_manage" ON invoice_items;
+CREATE POLICY "invoice_items_manage" ON invoice_items
+  USING (is_admin()) WITH CHECK (is_admin());
+
+-- invoice_employee_details : lecture staff + company_admin
+DROP POLICY IF EXISTS "inv_emp_details_select" ON invoice_employee_details;
+CREATE POLICY "inv_emp_details_select" ON invoice_employee_details FOR SELECT
+  USING (is_milys_staff() OR EXISTS (
+    SELECT 1 FROM invoices i
+    WHERE i.id = invoice_employee_details.invoice_id AND i.company_id = get_my_company_id()
+  ));
+
+DROP POLICY IF EXISTS "inv_emp_details_manage" ON invoice_employee_details;
+CREATE POLICY "inv_emp_details_manage" ON invoice_employee_details
+  USING (is_admin()) WITH CHECK (is_admin());
+
 -- audit_logs : lecture admin uniquement
 DROP POLICY IF EXISTS "audit_logs_select" ON audit_logs;
 CREATE POLICY "audit_logs_select" ON audit_logs FOR SELECT
@@ -1384,3 +1514,109 @@ INSERT INTO app_config (key, value, description) VALUES
   ('support_email',        '"support@milys-gourmet.ci"',                          'Email support client'),
   ('milys_address',        '"Cocody Riviera Palmeraie, Abidjan, Côte d''Ivoire"', 'Adresse MILY''S')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+
+-- --------------------------------------------------------------------------
+-- 7.10 Profils employés (20 employés répartis dans les 3 entreprises)
+-- --------------------------------------------------------------------------
+-- NOTE : Les UUID ci-dessous sont les id issus de auth.users.
+-- En développement, créer d'abord les utilisateurs Supabase Auth puis
+-- insérer les profils. Les INSERT ON CONFLICT permettent le rejeu.
+-- --------------------------------------------------------------------------
+
+-- IDs fixes pour les utilisateurs de test
+-- admin@milys.ci        → aaaaaaaa-0000-0000-0000-000000000001
+-- kitchen@milys.ci      → aaaaaaaa-0000-0000-0000-000000000002
+-- cashier@milys.ci      → aaaaaaaa-0000-0000-0000-000000000003
+-- rh@arti.ci            → aaaaaaaa-0000-0000-0000-000000000004
+-- employee1@arti.ci     → aaaaaaaa-0000-0000-0000-000000000005
+-- Employés supplémentaires → aaaaaaaa-0000-0000-0000-0000000000XX
+
+INSERT INTO profiles (id, email, full_name, phone, employee_type, matricule, company_id, site_id, department, is_active)
+VALUES
+  -- Staff MILY'S (pas de company_id)
+  ('aaaaaaaa-0000-0000-0000-000000000001', 'admin@milys.ci',       'Kouadio Yao Marcel',    '+225 07 01 00 00 01', 'regular', 'MLY-001', NULL, NULL, 'Direction', true),
+  ('aaaaaaaa-0000-0000-0000-000000000002', 'kitchen@milys.ci',     'Bamba Aminata',         '+225 07 01 00 00 02', 'regular', 'MLY-002', NULL, NULL, 'Cuisine', true),
+  ('aaaaaaaa-0000-0000-0000-000000000003', 'cashier@milys.ci',     'Touré Ibrahim',         '+225 07 01 00 00 03', 'regular', 'MLY-003', NULL, NULL, 'Caisse', true),
+
+  -- Orange CI (company 1) — 7 employés
+  ('aaaaaaaa-0000-0000-0000-000000000004', 'rh@orange.ci',         'Diallo Fatoumata',      '+225 07 02 00 00 01', 'regular', 'OCI-001', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', 'Ressources Humaines', true),
+  ('aaaaaaaa-0000-0000-0000-000000000005', 'employe1@orange.ci',   'Koné Moussa',           '+225 07 02 00 00 02', 'regular', 'OCI-002', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', 'Informatique', true),
+  ('aaaaaaaa-0000-0000-0000-000000000006', 'employe2@orange.ci',   'Sangaré Awa',           '+225 07 02 00 00 03', 'regular', 'OCI-003', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', 'Marketing', true),
+  ('aaaaaaaa-0000-0000-0000-000000000007', 'employe3@orange.ci',   'Coulibaly Jean-Marc',   '+225 07 02 00 00 04', 'regular', 'OCI-004', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000002', 'Commercial', true),
+  ('aaaaaaaa-0000-0000-0000-000000000008', 'employe4@orange.ci',   'N''Guessan Élodie',     '+225 07 02 00 00 05', 'regular', 'OCI-005', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000002', 'Finance', true),
+  ('aaaaaaaa-0000-0000-0000-000000000009', 'employe5@orange.ci',   'Yao Serge',             '+225 07 02 00 00 06', 'intern',  'OCI-006', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', 'Informatique', true),
+  ('aaaaaaaa-0000-0000-0000-000000000010', 'employe6@orange.ci',   'Traoré Mariam',         '+225 07 02 00 00 07', 'regular', 'OCI-007', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000002', 'Juridique', true),
+
+  -- TotalEnergies CI (company 2) — 6 employés
+  ('aaaaaaaa-0000-0000-0000-000000000011', 'rh@totalenergies.ci',  'Kouassi Brigitte',      '+225 07 03 00 00 01', 'regular', 'TTE-001', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000003', 'Ressources Humaines', true),
+  ('aaaaaaaa-0000-0000-0000-000000000012', 'employe1@total.ci',    'Brou Stéphane',         '+225 07 03 00 00 02', 'regular', 'TTE-002', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000003', 'Ingénierie', true),
+  ('aaaaaaaa-0000-0000-0000-000000000013', 'employe2@total.ci',    'Aka Rosalie',           '+225 07 03 00 00 03', 'regular', 'TTE-003', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000003', 'HSE', true),
+  ('aaaaaaaa-0000-0000-0000-000000000014', 'employe3@total.ci',    'Ouattara Karim',        '+225 07 03 00 00 04', 'regular', 'TTE-004', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000004', 'Logistique', true),
+  ('aaaaaaaa-0000-0000-0000-000000000015', 'employe4@total.ci',    'Gnamba Patricia',       '+225 07 03 00 00 05', 'regular', 'TTE-005', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000004', 'Finance', true),
+  ('aaaaaaaa-0000-0000-0000-000000000016', 'employe5@total.ci',    'Konan Amédée',          '+225 07 03 00 00 06', 'guard',   'TTE-006', '11111111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000003', 'Sécurité', true),
+
+  -- SGBCI (company 3) — 7 employés
+  ('aaaaaaaa-0000-0000-0000-000000000017', 'rh@sgbci.ci',          'Ahui Marie-Claire',     '+225 07 04 00 00 01', 'regular', 'SGB-001', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000005', 'Ressources Humaines', true),
+  ('aaaaaaaa-0000-0000-0000-000000000018', 'employe1@sgbci.ci',    'Gnamien Franck',        '+225 07 04 00 00 02', 'regular', 'SGB-002', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000005', 'Crédit', true),
+  ('aaaaaaaa-0000-0000-0000-000000000019', 'employe2@sgbci.ci',    'Dembélé Habiba',        '+225 07 04 00 00 03', 'regular', 'SGB-003', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000005', 'Opérations', true),
+  ('aaaaaaaa-0000-0000-0000-000000000020', 'employe3@sgbci.ci',    'Koffi Alain',           '+225 07 04 00 00 04', 'regular', 'SGB-004', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000006', 'Informatique', true),
+  ('aaaaaaaa-0000-0000-0000-000000000021', 'employe4@sgbci.ci',    'Assamoi Nadège',        '+225 07 04 00 00 05', 'regular', 'SGB-005', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000006', 'Conformité', true),
+  ('aaaaaaaa-0000-0000-0000-000000000022', 'employe5@sgbci.ci',    'Bakayoko Drissa',       '+225 07 04 00 00 06', 'regular', 'SGB-006', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000005', 'Finance', true),
+  ('aaaaaaaa-0000-0000-0000-000000000023', 'employe6@sgbci.ci',    'Tanoh Véronique',       '+225 07 04 00 00 07', 'intern',  'SGB-007', '11111111-0000-0000-0000-000000000003', '22222222-0000-0000-0000-000000000006', 'Marketing', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.11 Rôles utilisateurs de test
+-- --------------------------------------------------------------------------
+INSERT INTO user_roles (user_id, role, company_id)
+VALUES
+  -- Staff MILY'S
+  ('aaaaaaaa-0000-0000-0000-000000000001', 'superadmin',     NULL),
+  ('aaaaaaaa-0000-0000-0000-000000000002', 'milys_kitchen',  NULL),
+  ('aaaaaaaa-0000-0000-0000-000000000003', 'milys_cashier',  NULL),
+
+  -- Company admins (RH)
+  ('aaaaaaaa-0000-0000-0000-000000000004', 'company_admin',  '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000011', 'company_admin',  '11111111-0000-0000-0000-000000000002'),
+  ('aaaaaaaa-0000-0000-0000-000000000017', 'company_admin',  '11111111-0000-0000-0000-000000000003'),
+
+  -- Employés Orange CI
+  ('aaaaaaaa-0000-0000-0000-000000000005', 'employee', '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000006', 'employee', '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000007', 'employee', '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000008', 'employee', '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000009', 'employee', '11111111-0000-0000-0000-000000000001'),
+  ('aaaaaaaa-0000-0000-0000-000000000010', 'employee', '11111111-0000-0000-0000-000000000001'),
+
+  -- Employés TotalEnergies CI
+  ('aaaaaaaa-0000-0000-0000-000000000012', 'employee', '11111111-0000-0000-0000-000000000002'),
+  ('aaaaaaaa-0000-0000-0000-000000000013', 'employee', '11111111-0000-0000-0000-000000000002'),
+  ('aaaaaaaa-0000-0000-0000-000000000014', 'employee', '11111111-0000-0000-0000-000000000002'),
+  ('aaaaaaaa-0000-0000-0000-000000000015', 'employee', '11111111-0000-0000-0000-000000000002'),
+  ('aaaaaaaa-0000-0000-0000-000000000016', 'employee', '11111111-0000-0000-0000-000000000002'),
+
+  -- Employés SGBCI
+  ('aaaaaaaa-0000-0000-0000-000000000018', 'employee', '11111111-0000-0000-0000-000000000003'),
+  ('aaaaaaaa-0000-0000-0000-000000000019', 'employee', '11111111-0000-0000-0000-000000000003'),
+  ('aaaaaaaa-0000-0000-0000-000000000020', 'employee', '11111111-0000-0000-0000-000000000003'),
+  ('aaaaaaaa-0000-0000-0000-000000000021', 'employee', '11111111-0000-0000-0000-000000000003'),
+  ('aaaaaaaa-0000-0000-0000-000000000022', 'employee', '11111111-0000-0000-0000-000000000003'),
+  ('aaaaaaaa-0000-0000-0000-000000000023', 'employee', '11111111-0000-0000-0000-000000000003')
+ON CONFLICT (user_id, role) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.12 Utilisateurs Supabase Auth (test uniquement)
+-- --------------------------------------------------------------------------
+-- Ces utilisateurs sont créés via auth.users pour le développement local.
+-- En production, les utilisateurs sont créés via le flow d'inscription.
+-- Mots de passe : MilysAdmin2026! (pour tous les comptes de test)
+--
+-- Comptes de test principaux :
+--   admin@milys.ci        → superadmin       (MilysAdmin2026!)
+--   kitchen@milys.ci      → milys_kitchen    (MilysAdmin2026!)
+--   cashier@milys.ci      → milys_cashier    (MilysAdmin2026!)
+--   rh@orange.ci          → company_admin    (MilysAdmin2026!)
+--   employe1@orange.ci    → employee         (MilysAdmin2026!)
+--
+-- NOTE : Supabase Auth gère auth.users séparément. Utilisez le dashboard
+-- Supabase ou la CLI pour créer ces utilisateurs avec les UUID ci-dessus.

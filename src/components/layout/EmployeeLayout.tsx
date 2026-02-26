@@ -7,11 +7,11 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 
 const PAGE_TITLES: Record<string, string> = {
-  "/employee/dashboard": "Mon tableau de bord",
-  "/employee/menu": "Menu de la semaine",
-  "/employee/orders": "Mes commandes",
-  "/employee/qrcode": "Mon QR Code",
-  "/employee/profile": "Mon profil",
+  "/app/employee/dashboard": "Mon tableau de bord",
+  "/app/employee/menu": "Menu de la semaine",
+  "/app/employee/orders": "Mes commandes",
+  "/app/employee/qrcode": "Mon QR Code",
+  "/app/employee/profile": "Mon profil",
 }
 
 export function EmployeeLayout() {

@@ -57,7 +57,7 @@ export function LoginPage() {
       // After sign in, AuthContext will update user state
       // Navigate based on role (with fallback)
       const role = user?.roles[0]
-      const redirect = role ? ROLE_HOME_ROUTES[role] : "/employee/dashboard"
+      const redirect = role ? ROLE_HOME_ROUTES[role] : "/app/employee/dashboard"
       navigate(redirect, { replace: true })
     } catch (err: unknown) {
       const message =
@@ -198,7 +198,7 @@ export function LoginPage() {
 
         {/* Back to public site */}
         <p className="mt-6 text-center text-xs text-slate-500">
-          <Link to="/" className="hover:text-slate-300 transition-colors">
+          <Link to="/gourmet" className="hover:text-slate-300 transition-colors">
             ← Retour au site
           </Link>
         </p>

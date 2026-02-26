@@ -6,15 +6,15 @@ export const CURRENCY = "FCFA"
 
 // Role-based navigation config
 export const ROLE_HOME_ROUTES: Record<UserRole, string> = {
-  superadmin: "/admin/dashboard",
-  milys_admin: "/admin/dashboard",
-  milys_kitchen: "/kitchen/production",
-  milys_logistics: "/admin/deliveries",
-  milys_cashier: "/cashier/scan",
-  company_admin: "/admin/companies",
-  company_cashier: "/cashier/scan",
-  third_party_cashier: "/cashier/scan",
-  employee: "/employee/dashboard",
+  superadmin: "/app/admin/dashboard",
+  milys_admin: "/app/admin/dashboard",
+  milys_kitchen: "/app/kitchen/production",
+  milys_logistics: "/app/admin/deliveries",
+  milys_cashier: "/app/cashier/scan",
+  company_admin: "/app/admin/companies",
+  company_cashier: "/app/cashier/scan",
+  third_party_cashier: "/app/cashier/scan",
+  employee: "/app/employee/dashboard",
 }
 
 export const ADMIN_ROLES: UserRole[] = [
@@ -36,38 +36,38 @@ export const EMPLOYEE_ROLES: UserRole[] = ["employee"]
 
 // Admin sidebar navigation
 export const ADMIN_NAV = [
-  { path: "/admin/dashboard", label: "Tableau de bord", icon: "LayoutDashboard" },
-  { path: "/admin/companies", label: "Entreprises", icon: "Building2" },
-  { path: "/admin/employees", label: "Employés", icon: "Users" },
-  { path: "/admin/dishes", label: "Plats", icon: "UtensilsCrossed" },
-  { path: "/admin/menus", label: "Menus", icon: "BookOpen" },
-  { path: "/admin/orders", label: "Commandes", icon: "ShoppingCart" },
-  { path: "/admin/invoices", label: "Factures", icon: "FileText" },
-  { path: "/admin/deliveries", label: "Livraisons", icon: "Truck" },
-  { path: "/admin/suppliers", label: "Fournisseurs", icon: "Package" },
-  { path: "/admin/stock", label: "Stock", icon: "BarChart3" },
-  { path: "/admin/settings", label: "Paramètres", icon: "Settings" },
+  { path: "/app/admin/dashboard", label: "Tableau de bord", icon: "LayoutDashboard" },
+  { path: "/app/admin/companies", label: "Entreprises", icon: "Building2" },
+  { path: "/app/admin/employees", label: "Employés", icon: "Users" },
+  { path: "/app/admin/dishes", label: "Plats", icon: "UtensilsCrossed" },
+  { path: "/app/admin/menus", label: "Menus", icon: "BookOpen" },
+  { path: "/app/admin/orders", label: "Commandes", icon: "ShoppingCart" },
+  { path: "/app/admin/invoices", label: "Factures", icon: "FileText" },
+  { path: "/app/admin/deliveries", label: "Livraisons", icon: "Truck" },
+  { path: "/app/admin/suppliers", label: "Fournisseurs", icon: "Package" },
+  { path: "/app/admin/stock", label: "Stock", icon: "BarChart3" },
+  { path: "/app/admin/settings", label: "Paramètres", icon: "Settings" },
 ]
 
 // Employee sidebar navigation
 export const EMPLOYEE_NAV = [
-  { path: "/employee/dashboard", label: "Tableau de bord", icon: "Home" },
-  { path: "/employee/menu", label: "Menu de la semaine", icon: "UtensilsCrossed" },
-  { path: "/employee/orders", label: "Mes commandes", icon: "ShoppingCart" },
-  { path: "/employee/qrcode", label: "Mon QR Code", icon: "QrCode" },
-  { path: "/employee/profile", label: "Mon profil", icon: "User" },
+  { path: "/app/employee/dashboard", label: "Tableau de bord", icon: "Home" },
+  { path: "/app/employee/menu", label: "Menu de la semaine", icon: "UtensilsCrossed" },
+  { path: "/app/employee/orders", label: "Mes commandes", icon: "ShoppingCart" },
+  { path: "/app/employee/qrcode", label: "Mon QR Code", icon: "QrCode" },
+  { path: "/app/employee/profile", label: "Mon profil", icon: "User" },
 ]
 
 // Kitchen sidebar navigation
 export const KITCHEN_NAV = [
-  { path: "/kitchen/production", label: "Production du jour", icon: "ChefHat" },
-  { path: "/kitchen/stock", label: "Alertes stock", icon: "AlertTriangle" },
+  { path: "/app/kitchen/production", label: "Production du jour", icon: "ChefHat" },
+  { path: "/app/kitchen/stock", label: "Alertes stock", icon: "AlertTriangle" },
 ]
 
 // Cashier sidebar navigation
 export const CASHIER_NAV = [
-  { path: "/cashier/scan", label: "Scanner QR", icon: "QrCode" },
-  { path: "/cashier/report", label: "Rapport journalier", icon: "BarChart3" },
+  { path: "/app/cashier/scan", label: "Scanner QR", icon: "QrCode" },
+  { path: "/app/cashier/report", label: "Rapport journalier", icon: "BarChart3" },
 ]
 
 // Order status labels and colors

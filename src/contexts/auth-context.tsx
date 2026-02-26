@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: profile } = await supabase
         .from("profiles")
         .select("*, company:companies(*), site:company_sites(*)")
-        .eq("user_id", userId)
+        .eq("id", userId)
         .single<Profile>()
 
       const { data: roleRows } = await supabase

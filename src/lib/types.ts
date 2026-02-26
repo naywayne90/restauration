@@ -90,16 +90,14 @@ export interface CompanyContract {
 
 export interface Profile {
   id: string
-  user_id: string
-  full_name: string
   email: string
+  full_name: string
   phone?: string
   avatar_url?: string
+  employee_type: "regular" | "intern" | "guard" | "walk_in"
+  matricule?: string
   company_id?: string
   site_id?: string
-  role: UserRole
-  employee_code?: string
-  qr_code?: string
   badge_number?: string
   department?: string
   is_active: boolean
@@ -311,12 +309,11 @@ export interface Notification {
   id: string
   user_id: string
   title: string
-  body: string
+  message: string
   type: "info" | "success" | "warning" | "error"
   is_read: boolean
-  action_url?: string
+  link?: string
   created_at: string
-  updated_at: string
 }
 
 // ============================================================

@@ -8,21 +8,21 @@ import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
 
 const PAGE_TITLES: Record<string, string> = {
-  "/admin/dashboard": "Tableau de bord",
-  "/admin/companies": "Entreprises",
-  "/admin/employees": "Employés",
-  "/admin/dishes": "Plats",
-  "/admin/menus": "Menus",
-  "/admin/orders": "Commandes",
-  "/admin/invoices": "Factures",
-  "/admin/deliveries": "Livraisons",
-  "/admin/suppliers": "Fournisseurs",
-  "/admin/stock": "Stock",
-  "/admin/settings": "Paramètres",
-  "/kitchen/production": "Production du jour",
-  "/kitchen/stock": "Alertes stock",
-  "/cashier/scan": "Scanner QR Code",
-  "/cashier/report": "Rapport journalier",
+  "/app/admin/dashboard": "Tableau de bord",
+  "/app/admin/companies": "Entreprises",
+  "/app/admin/employees": "Employés",
+  "/app/admin/dishes": "Plats",
+  "/app/admin/menus": "Menus",
+  "/app/admin/orders": "Commandes",
+  "/app/admin/invoices": "Factures",
+  "/app/admin/deliveries": "Livraisons",
+  "/app/admin/suppliers": "Fournisseurs",
+  "/app/admin/stock": "Stock",
+  "/app/admin/settings": "Paramètres",
+  "/app/kitchen/production": "Production du jour",
+  "/app/kitchen/stock": "Alertes stock",
+  "/app/cashier/scan": "Scanner QR Code",
+  "/app/cashier/report": "Rapport journalier",
 }
 
 function getNavItems(roles: string[]) {

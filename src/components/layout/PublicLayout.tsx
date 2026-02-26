@@ -6,10 +6,10 @@ import { APP_NAME } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 const NAV_LINKS = [
-  { path: "/", label: "Accueil" },
-  { path: "/comment-ca-marche", label: "Comment ça marche" },
-  { path: "/entreprises", label: "Pour les entreprises" },
-  { path: "/contact", label: "Contact" },
+  { path: "/gourmet", label: "Accueil" },
+  { path: "/gourmet/comment-ca-marche", label: "Comment ça marche" },
+  { path: "/gourmet/entreprises", label: "Pour les entreprises" },
+  { path: "/gourmet/contact", label: "Contact" },
 ]
 
 export function PublicLayout() {
@@ -21,7 +21,7 @@ export function PublicLayout() {
       <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/gourmet" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
               <UtensilsCrossed className="h-5 w-5 text-white" />
             </div>
@@ -52,7 +52,7 @@ export function PublicLayout() {
               <Link to="/login">Connexion</Link>
             </Button>
             <Button asChild>
-              <Link to="/contact">Demander une démo</Link>
+              <Link to="/gourmet/contact">Demander une démo</Link>
             </Button>
           </div>
 
@@ -91,7 +91,7 @@ export function PublicLayout() {
                   <Link to="/login" onClick={() => setMobileOpen(false)}>Connexion</Link>
                 </Button>
                 <Button className="flex-1" asChild>
-                  <Link to="/contact" onClick={() => setMobileOpen(false)}>Démo</Link>
+                  <Link to="/gourmet/contact" onClick={() => setMobileOpen(false)}>Démo</Link>
                 </Button>
               </div>
             </nav>

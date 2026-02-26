@@ -21,15 +21,15 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 // ---------------------------------------------------------------------------
 
 export const ROLE_REDIRECT: Record<UserRole, string> = {
-  superadmin: "/app/admin/dashboard",
-  milys_admin: "/app/admin/dashboard",
-  milys_kitchen: "/app/kitchen/production",
-  milys_logistics: "/app/admin/deliveries",
-  milys_cashier: "/app/cashier/scan",
-  company_admin: "/app/admin/companies",
-  company_cashier: "/app/cashier/scan",
+  superadmin:          "/app/admin/dashboard",
+  milys_admin:         "/app/admin/dashboard",
+  milys_kitchen:       "/app/kitchen/production",
+  milys_logistics:     "/app/admin/deliveries",
+  milys_cashier:       "/app/cashier/scan",
+  company_admin:       "/app/admin/companies",
+  company_cashier:     "/app/cashier/scan",
   third_party_cashier: "/app/cashier/scan",
-  employee: "/app/employee/dashboard",
+  employee:            "/app/employee/dashboard",
 };
 
 // ---------------------------------------------------------------------------
