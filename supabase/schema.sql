@@ -22,19 +22,6 @@ DO $$ BEGIN CREATE TYPE user_role_enum AS ENUM (
     'third_party_cashier','employee'
 ); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-DO $$ BEGIN CREATE TYPE delivery_status_enum AS ENUM (
-    'pending','assigned','in_transit','delivered','failed'
-); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN CREATE TYPE payment_status_enum AS ENUM (
-    'pending','partial','paid','overdue','refunded'
-); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
-DO $$ BEGIN CREATE TYPE payment_method_enum AS ENUM (
-    'cash','mobile_money','wave','orange_money','mtn_money',
-    'bank_transfer','card','ticket'
-); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 DO $$ BEGIN CREATE TYPE stock_movement_enum AS ENUM (
     'entry','exit','adjustment','waste','return'
 ); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
@@ -394,112 +381,125 @@ CREATE TABLE IF NOT EXISTS physical_tickets (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS production_batches (
     id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    dish_id           UUID NOT NULL REFERENCES dishes(id) ON DELETE RESTRICT,
-    menu_id           UUID REFERENCES menus(id) ON DELETE SET NULL,
-    production_date   DATE NOT NULL DEFAULT CURRENT_DATE,
-    planned_quantity  INTEGER NOT NULL DEFAULT 0,
-    produced_quantity INTEGER NOT NULL DEFAULT 0,
-    status            TEXT NOT NULL DEFAULT 'pending'
-                          CHECK (status IN ('pending','in_progress','done','cancelled')),
-    started_at        TIMESTAMPTZ,
-    completed_at      TIMESTAMPTZ,
-    supervised_by     UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    notes             TEXT,
-    created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+    production_date   DATE NOT NULL,
+    site_id           UUID NOT NULL REFERENCES company_sites(id),
+    dish_id           UUID NOT NULL REFERENCES dishes(id),
+    planned_quantity  INTEGER NOT NULL,
+    produced_quantity INTEGER DEFAULT 0,
+    status            TEXT DEFAULT 'planned'
+                          CHECK (status IN ('planned','in_progress','completed')),
+    stock_deducted    BOOLEAN DEFAULT false,
+    created_at        TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(production_date, site_id, dish_id)
 );
 
 -- ----------------------------------------------------------------------------
 -- 3.11 Livraisons
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS drivers (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    vehicle_type  TEXT DEFAULT 'moto',
-    license_plate TEXT,
-    is_available  BOOLEAN NOT NULL DEFAULT true,
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name    TEXT NOT NULL,
+    phone        TEXT NOT NULL,
+    vehicle_info TEXT,
+    is_active    BOOLEAN DEFAULT true,
+    created_at   TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS deliveries (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    driver_id     UUID REFERENCES drivers(id) ON DELETE SET NULL,
-    site_id       UUID NOT NULL REFERENCES company_sites(id) ON DELETE RESTRICT,
-    delivery_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    status        delivery_status_enum NOT NULL DEFAULT 'pending',
-    scheduled_at  TIMESTAMPTZ,
-    departed_at   TIMESTAMPTZ,
-    delivered_at  TIMESTAMPTZ,
-    items_count   INTEGER NOT NULL DEFAULT 0,
-    signature_url TEXT,
-    notes         TEXT,
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    delivery_date  DATE NOT NULL,
+    site_id        UUID NOT NULL REFERENCES company_sites(id),
+    driver_id      UUID REFERENCES drivers(id),
+    status         TEXT DEFAULT 'scheduled'
+                       CHECK (status IN ('scheduled','in_transit','delivered','failed')),
+    departure_time TIMESTAMPTZ,
+    arrival_time   TIMESTAMPTZ,
+    notes          TEXT,
+    created_at     TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS delivery_items (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    delivery_id UUID NOT NULL REFERENCES deliveries(id) ON DELETE CASCADE,
-    order_id    UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    quantity    SMALLINT NOT NULL DEFAULT 1,
-    received    BOOLEAN NOT NULL DEFAULT false,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    delivery_id       UUID NOT NULL REFERENCES deliveries(id) ON DELETE CASCADE,
+    dish_id           UUID NOT NULL REFERENCES dishes(id),
+    quantity          INTEGER NOT NULL,
+    received_quantity INTEGER DEFAULT 0
 );
 
 -- ----------------------------------------------------------------------------
--- 3.12 Facturation & Paiements
+-- 3.12 Formules
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS formulas (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name        TEXT NOT NULL,
+    base_price  INTEGER NOT NULL DEFAULT 5000,
+    description TEXT,
+    is_active   BOOLEAN DEFAULT true,
+    created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- ----------------------------------------------------------------------------
+-- 3.13 Facturation & Paiements
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS invoices (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id     UUID NOT NULL REFERENCES companies(id) ON DELETE RESTRICT,
-    invoice_number TEXT NOT NULL UNIQUE,
+    company_id     UUID NOT NULL REFERENCES companies(id),
+    invoice_number TEXT UNIQUE NOT NULL,
     period_start   DATE NOT NULL,
     period_end     DATE NOT NULL,
-    meals_count    INTEGER NOT NULL DEFAULT 0,
-    subtotal       INTEGER NOT NULL DEFAULT 0,     -- FCFA HT
-    tax_rate       DECIMAL(5,2) NOT NULL DEFAULT 18.00,  -- TVA CI = 18%
-    tax_amount     INTEGER NOT NULL DEFAULT 0,
     total_amount   INTEGER NOT NULL DEFAULT 0,
-    status         payment_status_enum NOT NULL DEFAULT 'pending',
+    total_meals    INTEGER DEFAULT 0,
+    status         TEXT DEFAULT 'draft'
+                       CHECK (status IN ('draft','sent','paid','overdue','cancelled')),
     due_date       DATE,
-    issued_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    sent_at        TIMESTAMPTZ,
     paid_at        TIMESTAMPTZ,
+    pdf_url        TEXT,
     notes          TEXT,
-    created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at     TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS invoice_items (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     invoice_id  UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
     description TEXT NOT NULL,
-    quantity    DECIMAL(10,2) NOT NULL DEFAULT 1,
-    unit_price  INTEGER NOT NULL DEFAULT 0,   -- FCFA
-    amount      INTEGER NOT NULL DEFAULT 0,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    quantity    INTEGER NOT NULL,
+    unit_price  INTEGER NOT NULL,
+    total       INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS invoice_employee_details (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    invoice_id   UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-    employee_id  UUID NOT NULL REFERENCES auth.users(id) ON DELETE RESTRICT,
-    meals_count  INTEGER NOT NULL DEFAULT 0,
-    total_amount INTEGER NOT NULL DEFAULT 0,  -- FCFA
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE(invoice_id, employee_id)
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    invoice_id    UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+    employee_id   UUID NOT NULL REFERENCES auth.users(id),
+    employee_name TEXT NOT NULL,
+    total_meals   INTEGER NOT NULL,
+    total_amount  INTEGER NOT NULL,
+    extras_amount INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS payments (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    invoice_id  UUID NOT NULL REFERENCES invoices(id) ON DELETE RESTRICT,
-    amount      INTEGER NOT NULL,  -- FCFA
-    method      payment_method_enum NOT NULL DEFAULT 'bank_transfer',
-    reference   TEXT,
-    paid_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-    received_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    notes       TEXT,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id        UUID REFERENCES auth.users(id),
+    company_id     UUID REFERENCES companies(id),
+    amount         INTEGER NOT NULL,
+    payment_method TEXT NOT NULL
+                       CHECK (payment_method IN ('salary_deduction','orange_money','wave','mtn_money','djamo','cash','ticket','bank_transfer')),
+    reference      TEXT,
+    status         TEXT DEFAULT 'pending'
+                       CHECK (status IN ('pending','completed','failed','refunded')),
+    payment_type   TEXT DEFAULT 'employee'
+                       CHECK (payment_type IN ('employee','company','walk_in')),
+    completed_at   TIMESTAMPTZ,
+    created_at     TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS invoice_payments (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    invoice_id UUID NOT NULL REFERENCES invoices(id),
+    payment_id UUID NOT NULL REFERENCES payments(id),
+    amount     INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ----------------------------------------------------------------------------
@@ -626,6 +626,7 @@ CREATE INDEX IF NOT EXISTS idx_qr_scans_scanned_at ON qr_scans(scanned_at DESC);
 
 -- production_batches
 CREATE INDEX IF NOT EXISTS idx_prod_date    ON production_batches(production_date DESC);
+CREATE INDEX IF NOT EXISTS idx_prod_site_id ON production_batches(site_id);
 CREATE INDEX IF NOT EXISTS idx_prod_dish_id ON production_batches(dish_id);
 CREATE INDEX IF NOT EXISTS idx_prod_status  ON production_batches(status);
 
@@ -637,7 +638,7 @@ CREATE INDEX IF NOT EXISTS idx_deliveries_status    ON deliveries(status);
 
 -- delivery_items
 CREATE INDEX IF NOT EXISTS idx_deliv_items_delivery ON delivery_items(delivery_id);
-CREATE INDEX IF NOT EXISTS idx_deliv_items_order    ON delivery_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_deliv_items_dish     ON delivery_items(dish_id);
 
 -- invoices
 CREATE INDEX IF NOT EXISTS idx_invoices_company_id ON invoices(company_id);
@@ -646,8 +647,13 @@ CREATE INDEX IF NOT EXISTS idx_invoices_period     ON invoices(period_start, per
 CREATE INDEX IF NOT EXISTS idx_invoices_due_date   ON invoices(due_date);
 
 -- payments
-CREATE INDEX IF NOT EXISTS idx_payments_invoice_id ON payments(invoice_id);
-CREATE INDEX IF NOT EXISTS idx_payments_paid_at    ON payments(paid_at DESC);
+CREATE INDEX IF NOT EXISTS idx_payments_user_id    ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_company_id ON payments(company_id);
+CREATE INDEX IF NOT EXISTS idx_payments_status     ON payments(status);
+
+-- invoice_payments
+CREATE INDEX IF NOT EXISTS idx_inv_pay_invoice_id ON invoice_payments(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_inv_pay_payment_id ON invoice_payments(payment_id);
 
 -- notifications
 CREATE INDEX IF NOT EXISTS idx_notif_user_id    ON notifications(user_id);
@@ -683,8 +689,7 @@ BEGIN
       'companies','company_sites','company_contracts',
       'profiles','dishes','ingredients',
       'suppliers','purchase_orders','menus',
-      'weekly_plans','orders','production_batches',
-      'drivers','deliveries','invoices'
+      'weekly_plans','orders'
     ])
   LOOP
     EXECUTE format(
@@ -798,7 +803,8 @@ BEGIN
     'stock_movements','menus','menu_items','weekly_plans','weekly_plan_items',
     'orders','qr_codes','qr_scans','physical_tickets',
     'production_batches','drivers','deliveries','delivery_items',
-    'invoices','invoice_items','invoice_employee_details','payments',
+    'formulas','invoices','invoice_items','invoice_employee_details',
+    'payments','invoice_payments',
     'notifications','audit_logs','app_config'
   ])
   LOOP
@@ -1067,6 +1073,15 @@ DROP POLICY IF EXISTS "deliveries_manage" ON deliveries;
 CREATE POLICY "deliveries_manage" ON deliveries
   USING (is_milys_staff()) WITH CHECK (is_milys_staff());
 
+-- formulas : lecture authentifiée, gestion admin
+DROP POLICY IF EXISTS "formulas_select" ON formulas;
+CREATE POLICY "formulas_select" ON formulas FOR SELECT
+  USING (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "formulas_manage" ON formulas;
+CREATE POLICY "formulas_manage" ON formulas
+  USING (is_admin()) WITH CHECK (is_admin());
+
 -- invoices
 DROP POLICY IF EXISTS "invoices_select" ON invoices;
 CREATE POLICY "invoices_select" ON invoices FOR SELECT
@@ -1079,13 +1094,30 @@ CREATE POLICY "invoices_manage" ON invoices
 -- payments
 DROP POLICY IF EXISTS "payments_select" ON payments;
 CREATE POLICY "payments_select" ON payments FOR SELECT
-  USING (is_milys_staff() OR EXISTS (
-    SELECT 1 FROM invoices i
-    WHERE i.id = payments.invoice_id AND i.company_id = get_my_company_id()
-  ));
+  USING (
+    user_id = auth.uid()
+    OR is_milys_staff()
+    OR (company_id IS NOT NULL AND company_id = get_my_company_id())
+  );
+
+DROP POLICY IF EXISTS "payments_insert" ON payments;
+CREATE POLICY "payments_insert" ON payments FOR INSERT
+  WITH CHECK (user_id = auth.uid() OR is_milys_staff());
 
 DROP POLICY IF EXISTS "payments_manage" ON payments;
-CREATE POLICY "payments_manage" ON payments
+CREATE POLICY "payments_manage" ON payments FOR UPDATE
+  USING (is_admin() OR is_milys_staff());
+
+-- invoice_payments
+DROP POLICY IF EXISTS "inv_pay_select" ON invoice_payments;
+CREATE POLICY "inv_pay_select" ON invoice_payments FOR SELECT
+  USING (is_milys_staff() OR EXISTS (
+    SELECT 1 FROM invoices i
+    WHERE i.id = invoice_payments.invoice_id AND i.company_id = get_my_company_id()
+  ));
+
+DROP POLICY IF EXISTS "inv_pay_manage" ON invoice_payments;
+CREATE POLICY "inv_pay_manage" ON invoice_payments
   USING (is_admin()) WITH CHECK (is_admin());
 
 -- notifications : propres à l'utilisateur
@@ -1289,7 +1321,18 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- --------------------------------------------------------------------------
--- 7.7 Menu hebdomadaire (semaine du 23–27 Fév 2026)
+-- 7.7 Formules
+-- --------------------------------------------------------------------------
+INSERT INTO formulas (id, name, base_price, description, is_active)
+VALUES
+  ('77777777-0000-0000-0000-000000000001', 'Standard',   3000, 'Plat principal au choix',                true),
+  ('77777777-0000-0000-0000-000000000002', 'Premium',    4500, 'Entrée + plat principal + dessert',      true),
+  ('77777777-0000-0000-0000-000000000003', 'Végétarien', 2500, 'Plat végétarien du jour',                true),
+  ('77777777-0000-0000-0000-000000000004', 'Économique', 2000, 'Plat unique du jour (pas de choix)',     true)
+ON CONFLICT (id) DO NOTHING;
+
+-- --------------------------------------------------------------------------
+-- 7.8 Menu hebdomadaire (semaine du 23–27 Fév 2026)
 -- --------------------------------------------------------------------------
 INSERT INTO menus (id, name, week_start, week_end, is_published)
 VALUES
@@ -1325,7 +1368,7 @@ VALUES
 ON CONFLICT (menu_id, dish_id, day_of_week) DO NOTHING;
 
 -- --------------------------------------------------------------------------
--- 7.8 Configuration applicative
+-- 7.9 Configuration applicative
 -- --------------------------------------------------------------------------
 INSERT INTO app_config (key, value, description) VALUES
   ('app_name',             'MILY''S Gourmet',                                    'Nom de l''application'),
